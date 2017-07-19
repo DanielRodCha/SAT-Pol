@@ -72,11 +72,11 @@ varsList = foldr (\vs acc -> S.union acc (varsSet vs)) S.empty
 -- the paper [?]. It's important to note that p is the variable from wich we
 -- derive and the one we would drop. For example:
 -- 
--- >>> deltaRule (x1:: LexPoly F2 String) (1:: LexPoly F2 String) (1:: LexPoly F2 String)
+-- >>> deltaRule x1 1 1
 -- 1
--- >>> deltaRule (x1:: LexPoly F2 String) (1:: LexPoly F2 String) (0:: LexPoly F2 String)
+-- >>> deltaRule x1 1 0
 -- 0
--- >>> deltaRule (x1:: LexPoly F2 String) (x1:: LexPoly F2 String) (x1:: LexPoly F2 String)
+-- >>> deltaRule x1 x1 x1
 -- 1
 
 deltaRule' :: (Eq k, Eq u, Num k, Ord (m u), Algebra k (m u),
@@ -110,10 +110,10 @@ deltaRule p a1 a2 = clean (aux + a1a2 + aux2)
 -- first list and store the results in the accumulator (second list). For
 -- example:
 -- 
--- >>> deltaRuleList1Step (x1:: LexPoly F2 String) ([x1]:: [LexPoly F2 String]) ([1]::[LexPoly F2 String]) 
--- [1,1]
--- >>> deltaRuleList1Step (x1:: LexPoly F2 String) ([x1,x1*x2,x1*x3]:: [LexPoly F2 String]) ([]::[LexPoly F2 String]) 
--- [x3,x2x3,x2,x3,x2,1]
+-- >>> deltaRule1Step x1 (S.fromList [x1]) (S.fromList [1]) 
+-- fromList [1]
+-- >>> deltaRule1Step x1 (S.fromList [x1,x1*x2,x1*x3]) (S.empty) 
+-- fromList [x2x3,x2,x3,1]
 
 deltaRule1Step ::
   (Eq k

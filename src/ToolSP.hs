@@ -71,12 +71,12 @@ varsList = foldr (\vs acc -> S.union acc (varsSet vs)) S.empty
 -- the paper [?]. It's important to note that p is the variable from wich we
 -- derive and the one we would drop. For example:
 -- 
--- >>> deltaRule (x1:: LexPoly F2 String) (1:: LexPoly F2 String) (1:: LexPoly F2 String)
--- 1
--- >>> deltaRule (x1:: LexPoly F2 String) (1:: LexPoly F2 String) (0:: LexPoly F2 String)
--- 0
--- >>> deltaRule (x1:: LexPoly F2 String) (x1:: LexPoly F2 String) (x1:: LexPoly F2 String)
--- 1
+-- >>> deltaRule x1 (1, S.empty) (1,S.empty)
+-- (1,fromList [])
+-- >>> deltaRule x1 (1, S.empty) (0, S.empty)
+-- (0,fromList [])
+-- >>> deltaRule x1 (x1, S.fromList [x1]) (x1, S.fromList [x1])
+-- (1,fromList [])
 
 deltaRule :: (Eq k, Eq u, Ord k, Num k, Ord (m u), Algebra k (m u),
               MonomialConstructor m, Show (m u), Show u) =>
@@ -84,10 +84,15 @@ deltaRule :: (Eq k, Eq u, Ord k, Num k, Ord (m u), Algebra k (m u),
               (Vect k (m u),S.Set (Vect k (m u))) ->
               (Vect k (m u),S.Set (Vect k (m u))) ->
               (Vect k (m u),S.Set (Vect k (m u)))
-deltaRule p (a1,v1) (a2,v2) = (a,v)
-  where da1 = deriv a1 p
-        da2 = deriv a2 p
-        a   = clean (1 + (1+a1*a2)*(1+a1*da2 + a2*da1 + da1*da2))
+deltaRule p (a1,v1) (a2,v2) = (clean (aux + a1a2 + aux2),v)
+  where da1        = deriv a1 p
+        da2        = deriv a2 p
+        a1a2       = clean (a1*a2)
+        a1da2      = clean a1*da2
+        a2da1      = clean a2*da1
+        da1da2     = clean da1*da2
+        aux        = a1da2 + a2da1 + da1da2
+        aux2       = clean (a1a2*aux)
         v1' = S.delete p v1
         v2' = S.delete p v2
         v   = S.union v1' v2' 
@@ -98,10 +103,10 @@ deltaRule p (a1,v1) (a2,v2) = (a,v)
 -- first list and store the results in the accumulator (second list). For
 -- example:
 -- 
--- >>> deltaRuleList1Step (x1:: LexPoly F2 String) ([x1]:: [LexPoly F2 String]) ([1]::[LexPoly F2 String]) 
--- [1,1]
--- >>> deltaRuleList1Step (x1:: LexPoly F2 String) ([x1,x1*x2,x1*x3]:: [LexPoly F2 String]) ([]::[LexPoly F2 String]) 
--- [x3,x2x3,x2,x3,x2,1]
+-- >>> deltaRule1Step (x1:: LexPoly F2 String) (S.fromList [((x1:: LexPoly F2 String), S.fromList [x1])]) (S.fromList [((1:: LexPoly F2 String), S.empty)])
+-- fromList [(1,fromList [])]
+-- >>> deltaRule1Step x1 (S.fromList [(x1, S.fromList [x1]),(x1*x2,S.fromList [x1,x2]),(x1*x3,S.fromList [x1,x3])]) (S.empty)
+-- fromList [(x2x3,fromList [x2,x3]),(x2,fromList [x2]),(x3,fromList [x3]),(1,fromList [])]
 
 deltaRule1Step ::
   (Eq k
