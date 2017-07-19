@@ -79,26 +79,18 @@ varsList = foldr (\vs acc -> S.union acc (varsSet vs)) S.empty
 -- >>> deltaRule x1 x1 x1
 -- 1
 
-deltaRule' :: (Eq k, Eq u, Num k, Ord (m u), Algebra k (m u),
-              MonomialConstructor m, Show (m u), Show u) =>
-             Vect k (m u) -> Vect k (m u) -> Vect k (m u) -> Vect k (m u)
-deltaRule' p a1 a2 = clean (1 + (1+a1*a2)*(1+a1*da2 + a2*da1 + da1*da2))
-  where da1 = deriv a1 p
-        da2 = deriv a2 p
-
-deltaRule :: (Eq k, Eq u, Num k, Ord (m u), Algebra k (m u),
-              MonomialConstructor m, Show (m u), Show u) =>
-             Vect k (m u) -> Vect k (m u) -> Vect k (m u) -> Vect k (m u)
-deltaRule p a1 a2 = clean (aux + a1a2 + aux2)
+deltaRule :: Vect F2 (Lex String) -> Vect F2 (Lex String) ->
+             Vect F2 (Lex String) -> Vect F2 (Lex String)
+deltaRule p a1 a2 = cleanExp (aux + a1a2 + aux2)
   --clean (a1da2 + a2da1 + da1da2 + a1a2 + a1a2a1da2 + a1a2a2da1 + a1a2da1da2)
   where da1        = deriv a1 p
         da2        = deriv a2 p
-        a1a2       = clean (a1*a2)
-        a1da2      = clean a1*da2
-        a2da1      = clean a2*da1
-        da1da2     = clean da1*da2
-        aux        = a1da2 + a2da1 + da1da2
-        aux2       = clean (a1a2*aux)
+        a1a2       = cleanExp (a1*a2)
+        a1da2      = cleanExp a1*da2
+        a2da1      = cleanExp a2*da1
+        da1da2     = cleanExp da1*da2
+        aux        = cleanExp (a1da2 + a2da1 + da1da2)
+        aux2       = cleanExp (a1a2*aux)
         --a1a2a1da2  = clean (a2*a1da2)
         --a1a2a2da1  = clean (a1*a2da1)
         --a1a2da1da2 = clean (a1a2*da1da2)
@@ -115,15 +107,8 @@ deltaRule p a1 a2 = clean (aux + a1a2 + aux2)
 -- >>> deltaRule1Step x1 (S.fromList [x1,x1*x2,x1*x3]) (S.empty) 
 -- fromList [x2x3,x2,x3,1]
 
-deltaRule1Step ::
-  (Eq k
-  , Eq u
-  , Num k, Ord k
-  , Ord (m u)
-  , Algebra k (m u)
-  , MonomialConstructor m
-  , Show (m u), Show u) =>
-  Vect k (m u) -> S.Set (Vect k (m u)) -> S.Set (Vect k (m u)) -> S.Set (Vect k (m u))
+deltaRule1Step :: Vect F2 (Lex String) -> S.Set (Vect F2 (Lex String)) ->
+                  S.Set (Vect F2 (Lex String)) -> S.Set (Vect F2 (Lex String))
 deltaRule1Step v pps acum | S.null pps = acum
                           | otherwise  = deltaRule1Step v ps miniStep
   where (p,ps)   = S.deleteFindMin pps -- A pair form by the minimal element of
@@ -144,17 +129,7 @@ deltaRule1Step v pps acum | S.null pps = acum
 -- of zeros.
 
 
-toolAux :: (Eq k
-           , Ord k
-           , Eq u
-           , Show (m u)
-           , Show u
-           , MonomialConstructor m
-           , Algebra k (m u)
-           , Ord (m u)
-           , Monomial (m u)
-           , Num k) =>
-           S.Set (Vect k (m u)) -> S.Set (Vect k (m u)) -> Bool
+toolAux :: S.Set (Vect F2 (Lex String)) -> S.Set (Vect F2 (Lex String)) -> Bool
 toolAux vvs ps | S.null vvs        = S.notMember 0 ps
                | S.member 0 ps  = False
                | otherwise      = toolAux vs ps'
@@ -170,31 +145,13 @@ toolAux vvs ps | S.null vvs        = S.notMember 0 ps
 -- were satisfiables. The function input is a list of polynomials because the
 -- transformation from formula to polynomial is handled by ReadingF.hs module.
 
-toolS :: (Eq u
-         , Show (m u)
-         , Show u
-         , MonomialConstructor m
-         , Algebra k (m u)
-         , Ord (m u)
-         , Monomial (m u)
-         , Ord k
-         , Num k) =>
-         S.Set (Vect k (m u)) -> Bool
+toolS :: S.Set (Vect F2 (Lex String)) -> Bool
 toolS xs = toolAux (varsList xs) xs
 
 -------------------------------------------------------------------------------
 
 
-toolSP' :: (Eq u
-          , Show (m u)
-          , Show u
-          , MonomialConstructor m
-          , Algebra k (m u)
-          , Ord (m u)
-          , Monomial (m u)
-          , Ord k
-          , Num k) =>
-          (S.Set (Vect k (m u)), S.Set (Vect k (m u))) -> Bool
+toolSP' :: (S.Set (Vect F2 (Lex String)), S.Set (Vect F2 (Lex String))) -> Bool
 toolSP' (xs,vs) = toolAux vs xs
 
 -------------------------------------------------------------------------------

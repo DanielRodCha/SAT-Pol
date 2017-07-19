@@ -62,10 +62,9 @@ varsList2 xs = nub $ foldl' (\acc x -> (vars x)++acc) [] xs
 -- 0
 -- >>> deltaRule (x1:: LexPoly F2 String) (x1:: LexPoly F2 String) (x1:: LexPoly F2 String)
 -- 1
-deltaRule :: (Eq k, Eq u, Num k, Ord (m u), Algebra k (m u),
-              MonomialConstructor m, Show (m u), Show u) =>
-             Vect k (m u) -> Vect k (m u) -> Vect k (m u) -> Vect k (m u)
-deltaRule p a1 a2 = clean (1 + (1+a1*a2)*(1+a1*da2 + a2*da1 + da1*da2))
+deltaRule :: Vect F2 (Lex String) -> Vect F2 (Lex String) ->
+             Vect F2 (Lex String) -> Vect F2 (Lex String)
+deltaRule p a1 a2 = cleanExp (1 + (1+a1*a2)*(1+a1*da2 + a2*da1 + da1*da2))
   where da1 = deriv a1 p
         da2 = deriv a2 p
 
@@ -79,15 +78,8 @@ deltaRule p a1 a2 = clean (1 + (1+a1*a2)*(1+a1*da2 + a2*da1 + da1*da2))
 -- [1,1]
 -- >>> deltaRuleList1Step (x1:: LexPoly F2 String) ([x1,x1*x2,x1*x3]:: [LexPoly F2 String]) ([]::[LexPoly F2 String]) 
 -- [x3,x2x3,x2,x3,x2,1]
-deltaRuleList1Step ::
-  (Eq k
-  , Eq u
-  , Num k, Ord k
-  , Ord (m u)
-  , Algebra k (m u)
-  , MonomialConstructor m
-  , Show (m u), Show u) =>
-  Vect k (m u) -> [Vect k (m u)] -> [Vect k (m u)] -> [Vect k (m u)]
+deltaRuleList1Step :: Vect F2 (Lex String) -> [Vect F2 (Lex String)] ->
+                      [Vect F2 (Lex String)] -> [Vect F2 (Lex String)]
 deltaRuleList1Step _  [] xs    = xs
 deltaRuleList1Step p (x:xs) ys =
  deltaRuleList1Step p xs (foldl' (\acc y -> ((deltaRule p x y):acc)) ys (x:xs))
@@ -104,16 +96,7 @@ deltaRuleList1Step p (x:xs) ys =
 -- of zeros.
 
 
-toolAux :: (Eq k
-           , Ord k
-           , Eq u
-           , Show (m u)
-           , Show u
-           , MonomialConstructor m
-           , Algebra k (m u)
-           , Ord (m u)
-           , Num k) =>
-           [Vect k (m u)] -> [Vect k (m u)] -> Bool
+toolAux :: [Vect F2 (Lex String)] -> [Vect F2 (Lex String)] -> Bool
 toolAux [] xs     = if (elem 0 xs) then False else True
 toolAux (p:ps) xs = if (elem 0 ys) then False else (toolAux ps ys)
   where (xs1,xs2) = partition (\x -> elem p (vars x)) xs
@@ -125,15 +108,7 @@ toolAux (p:ps) xs = if (elem 0 ys) then False else (toolAux ps ys)
 -- were satisfiables. The function input is a list of polynomials because the
 -- transformation from formula to polynomial is handled by ReadingF.hs module.
 
-tool :: (Eq u
-        , Show (m u)
-        , Show u
-        , MonomialConstructor m
-        , Algebra k (m u)
-        , Ord (m u)
-        , Ord k
-        , Num k) =>
-        [Vect k (m u)] -> Bool
+tool :: [Vect F2 (Lex String)] -> Bool
 tool xs = toolAux (varsList xs) xs
 
 -------------------------------------------------------------------------------

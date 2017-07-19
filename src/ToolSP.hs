@@ -78,21 +78,19 @@ varsList = foldr (\vs acc -> S.union acc (varsSet vs)) S.empty
 -- >>> deltaRule x1 (x1, S.fromList [x1]) (x1, S.fromList [x1])
 -- (1,fromList [])
 
-deltaRule :: (Eq k, Eq u, Ord k, Num k, Ord (m u), Algebra k (m u),
-              MonomialConstructor m, Show (m u), Show u) =>
-              Vect k (m u) ->
-              (Vect k (m u),S.Set (Vect k (m u))) ->
-              (Vect k (m u),S.Set (Vect k (m u))) ->
-              (Vect k (m u),S.Set (Vect k (m u)))
-deltaRule p (a1,v1) (a2,v2) = (clean (aux + a1a2 + aux2),v)
+deltaRule :: Vect F2 (Lex String) ->
+             (Vect F2 (Lex String),S.Set (Vect F2 (Lex String))) ->
+             (Vect F2 (Lex String),S.Set (Vect F2 (Lex String))) ->
+             (Vect F2 (Lex String),S.Set (Vect F2 (Lex String)))
+deltaRule p (a1,v1) (a2,v2) = (cleanExp (aux + a1a2 + aux2),v)
   where da1        = deriv a1 p
         da2        = deriv a2 p
-        a1a2       = clean (a1*a2)
-        a1da2      = clean a1*da2
-        a2da1      = clean a2*da1
-        da1da2     = clean da1*da2
-        aux        = a1da2 + a2da1 + da1da2
-        aux2       = clean (a1a2*aux)
+        a1a2       = cleanExp (a1*a2)
+        a1da2      = cleanExp a1*da2
+        a2da1      = cleanExp a2*da1
+        da1da2     = cleanExp da1*da2
+        aux        = cleanExp (a1da2 + a2da1 + da1da2)
+        aux2       = cleanExp (a1a2*aux)
         v1' = S.delete p v1
         v2' = S.delete p v2
         v   = S.union v1' v2' 
@@ -109,16 +107,9 @@ deltaRule p (a1,v1) (a2,v2) = (clean (aux + a1a2 + aux2),v)
 -- fromList [(x2x3,fromList [x2,x3]),(x2,fromList [x2]),(x3,fromList [x3]),(1,fromList [])]
 
 deltaRule1Step ::
-  (Eq k
-  , Eq u
-  , Num k, Ord k
-  , Ord (m u)
-  , Algebra k (m u)
-  , MonomialConstructor m
-  , Show (m u), Show u) =>
-  Vect k (m u) -> S.Set (Vect k (m u),S.Set (Vect k (m u))) ->
-  S.Set (Vect k (m u),S.Set (Vect k (m u))) ->
-  S.Set (Vect k (m u),S.Set (Vect k (m u))) 
+  Vect F2 (Lex String) -> S.Set (Vect F2 (Lex String),S.Set (Vect F2 (Lex String))) ->
+  S.Set (Vect F2 (Lex String),S.Set (Vect F2 (Lex String))) ->
+  S.Set (Vect F2 (Lex String),S.Set (Vect F2 (Lex String))) 
 deltaRule1Step v pps acum | S.null pps = acum
                           | otherwise  = deltaRule1Step v ps miniStep
   where (p,ps)   = S.deleteFindMin pps -- A pair form by the minimal element of
@@ -138,17 +129,8 @@ deltaRule1Step v pps acum | S.null pps = acum
 -- of zeros.
 
 
-toolAux :: (Eq k
-           , Ord k
-           , Eq u
-           , Show (m u)
-           , Show u
-           , MonomialConstructor m
-           , Algebra k (m u)
-           , Ord (m u)
-           , Monomial (m u)
-           , Num k) =>
-           S.Set (Vect k (m u)) -> S.Set (Vect k (m u),S.Set (Vect k (m u))) -> Bool
+toolAux :: S.Set (Vect F2 (Lex String)) ->
+           S.Set (Vect F2 (Lex String),S.Set (Vect F2 (Lex String))) -> Bool 
 toolAux vvs ps | S.null vvs                = S.notMember (0,S.empty) ps
                | S.member (0,S.empty) ps   = False
                | otherwise                 = toolAux vs ps'
@@ -163,16 +145,9 @@ toolAux vvs ps | S.null vvs                = S.notMember (0,S.empty) ps
 -- were satisfiables. The function input is a list of polynomials because the
 -- transformation from formula to polynomial is handled by ReadingF.hs module.
 
-toolSP :: (Eq u
-          , Show (m u)
-          , Show u
-          , MonomialConstructor m
-          , Algebra k (m u)
-          , Ord (m u)
-          , Monomial (m u)
-          , Ord k
-          , Num k) =>
-          (S.Set (Vect k (m u),S.Set (Vect k (m u))), S.Set (Vect k (m u))) -> Bool
+toolSP :: (S.Set (Vect F2 (Lex String),S.Set (Vect F2 (Lex String))),
+           S.Set (Vect F2 (Lex String))) ->
+          Bool
 toolSP (xs,vs) = toolAux vs xs
 
 -------------------------------------------------------------------------------

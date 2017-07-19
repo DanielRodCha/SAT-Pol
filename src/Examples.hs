@@ -29,7 +29,11 @@ exampleSet = S.fromList [1,x1*x2+x1+x2,x1*x2+x1+1,x1*x2+1,x1*x2+x2+1]
 -- --polx :: Vect F2 (Lex String)
 -- monx = Lex (M 1 [("x1",1)])
 
--- ejMonomio = Lex (M 1 [("x1",1),("y2",2)])
+exampleMonomial1 = (Lex (M 1 []))
+exampleMonomial2 = (Lex (M 1 [("x1",1)]))
+exampleMonomial3 = (Lex (M 1 [("x1",1),("x2",1)]))
+
+--ejMonomio = Lex (M 1 [("x1",1),("y2",2)])
 -- ejMonomio2 = Lex (M 1 [("x1",2),("y2",2)])
 
 -- ej1 :: LexPoly F2 String

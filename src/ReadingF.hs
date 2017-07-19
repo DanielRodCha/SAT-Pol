@@ -17,7 +17,7 @@ import Math.Core.Utils (toSet)
 import PolAux
 import Tool (tool,varsList)
 import ToolS (toolS, toolSP')
---import ToolSP (toolSP)
+import ToolSP (toolSP)
 
 import qualified Data.Set as S
 
@@ -26,7 +26,7 @@ main1 f = do
   s <- readFile f
   print
     $ nub
-    $ foldr (\x acc -> (((clean . varFold . words) x):acc)) []
+    $ foldr (\x acc -> (((cleanExp . varFold . words) x):acc)) []
     $ lines
     $ s
 
@@ -38,25 +38,19 @@ main2 f = do
   print
     $ tool
     $ nub
-    $ foldr (\x acc -> (((clean . varFold . words) x):acc)) []
+    $ foldr (\x acc -> (((cleanExp . varFold . words) x):acc)) []
     $ lines
     $ s 
 
-cleanP :: ( Eq k
-          , Num k
-          , Ord (m u)
-          , Show (m u)
-          , Show u
-          , Algebra k (m u)
-          , MonomialConstructor m) =>
-          (Vect k (m u), t) -> (Vect k (m u), t)
-cleanP (a,b) = (clean a,b)
+cleanP (a,b) = (cleanExp a,b)
 
 insertP (a,b) (acc,vs) = (S.insert a acc, S.union vs b)
 
+insertP' (a,b) (acc,vs) = (S.insert (a,b) acc, S.union vs b)
+
 main3 f = do
   s <- readFile f
-  print $ (foldr (\x acc -> (S.insert ((clean . varFold . words) x) acc)) S.empty) $ lines $ s
+  print $ (foldr (\x acc -> (S.insert ((cleanExp . varFold . words) x) acc)) S.empty) $ lines $ s
 
 main3P f = do
   s <- readFile f
@@ -67,11 +61,15 @@ main3P f = do
 
 main4 f = do
   s <- readFile f
-  print $ toolS $ (foldr (\x acc -> (S.insert ((clean . varFold . words) x) acc)) S.empty) $ lines $ s
+  print $ toolS $ (foldr (\x acc -> (S.insert ((cleanExp . varFold . words) x) acc)) S.empty) $ lines $ s
 
 main4P f = do
   s <- readFile f
   print $ toolSP' $ (foldr (\x acc -> (insertP ((cleanP . varFoldP . words) x) acc)) (S.empty,S.empty)) $ lines $ s
+
+main4SP f = do
+  s <- readFile f
+  print $ toolSP $ (foldr (\x acc -> (insertP' ((cleanP . varFoldP . words) x) acc)) (S.empty,S.empty)) $ lines $ s
 
 -------------------------------------------------------------------------------
   
@@ -98,15 +96,15 @@ varFoldP xs = foldl' (\acc x -> disjP (var'P x) acc) (zerov,S.empty) xs
 -------------------------------------------------------------------------------
 
 var' "0"      = zerov
-var' ('-':xs) = 1 + var ('x':xs)
-var' x        = var ('x':x)
+var' ('-':xs) = 1 + var xs
+var' x        = var x
 
 
 var'P "0"      = (zerov,zerov)
 var'P ('-':xs) = (1 + x,x)
-                   where x = var ('x':xs)
+                   where x = var xs
 var'P xs       = (x,x)
-                   where x = var ('x':xs)    
+                   where x = var xs    
 
 -------------------------------------------------------------------------------
 
