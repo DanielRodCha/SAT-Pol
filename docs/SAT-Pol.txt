@@ -71,23 +71,75 @@ zerov :: Vect k b
 --   Artificial Intelligence at the University of Seville.
 module Tool
 
--- | <b>(tool (vvs,ps))</b> is verified if the original set of formulas
+-- | <b>(tool (ps,vvs))</b> is verified if the original set of formulas
 --   which polynomials from <i>ps</i> came was satisfiable. Otherwise, the
 --   function will return False if that set of formulas was unsatisfiable.
 --   Note that <i>vvs</i> is the set of variables which occurs in any
---   polynomial from <i>ps</i>.
+--   polynomial from <i>ps</i>. For example,
+--   
+--   <pre>
+--   &gt;&gt;&gt; tool (S.fromList[1],S.empty)
+--   True
+--   
+--   &gt;&gt;&gt; tool (S.fromList[x1,x1+1],S.fromList[x1])
+--   False
+--   </pre>
 tool :: (Set (PolF2), Set (PolF2)) -> Bool
 
 module ReadingF
-cleanP :: (PolF2, t) -> (PolF2, t)
-insertP :: (Ord a, Ord a1) => (a1, Set a) -> (Set a1, Set a) -> (Set a1, Set a)
-insertP' :: (Ord a, Ord t) => (t, Set a) -> (Set (t, Set a), Set a) -> (Set (t, Set a), Set a)
-main3 :: FilePath -> IO ()
-main3P :: FilePath -> IO ()
-main4P :: FilePath -> IO ()
-varFold :: [String] -> PolF2
-varFoldP :: [String] -> (PolF2, Set (PolF2))
-var' :: (MonomialConstructor m, Algebra k (m [Char]), Show (m [Char]), Ord (m [Char]), Eq k, Num k) => [Char] -> Vect k (m [Char])
-var'P :: (MonomialConstructor m, Algebra k (m [Char]), Show (m [Char]), Ord (m [Char]), Eq k, Num k) => [Char] -> (Vect k (m [Char]), Vect k (m [Char]))
-disj :: Num a => a -> a -> a
-disjP :: (Ord b, Ord k, Num a) => (a, Vect k b) -> (a, Set (Vect k b)) -> (a, Set (Vect k b))
+
+-- | <b>(clause2pol cs)</b> is a pair <i>(p,vs)</i>, where <i>p</i> is the
+--   polynomial that corresponds to the clause <i>cs</i> (which is written
+--   in DIMACS format) and <i>vs</i> is the set of its variables.
+--   
+--   <pre>
+--   &gt;&gt;&gt; clause2pol ["1"]
+--   (x1,fromList [x1])
+--   
+--   &gt;&gt;&gt; clause2pol ["1","-2"]
+--   (x1x2+x2+1,fromList [x1,x2])
+--   </pre>
+clause2pol :: [String] -> (PolF2, Set (PolF2))
+
+-- | <b>(var' lit)</b> is the pair <i>(p,v)</i>, where <i>p</i> is the
+--   polynomial and <i>v</i> is the variable that corresponds (if it does)
+--   to the literal <i>lit</i> (in DIMACS format).
+--   
+--   <pre>
+--   &gt;&gt;&gt; var' "0"
+--   (0,0)
+--   
+--   &gt;&gt;&gt; var' "1"
+--   (x1,x1)
+--   
+--   &gt;&gt;&gt; var' "-1"
+--   (x1+1,x1)
+--   </pre>
+var' :: String -> (PolF2, PolF2)
+
+-- | <b>(dimacs2pols f)</b> is the pair (<i>ps</i>,<i>vs</i>) where ps is
+--   the set of polynomials wich corresponds to the formula in DIMACS
+--   format writed in the file <i>f</i> and <i>vs</i> is the set of
+--   variables wich occurs in any polynomial.
+--   
+--   <pre>
+--   &gt;&gt;&gt; dimacs2pols "exDIMACS/easy/example1.txt"
+--   (fromList [x1x2+x1+x2,1],fromList [x1,x2])
+--   
+--   &gt;&gt;&gt; dimacs2pols "exDIMACS/easy/example4.txt"
+--   (fromList [x1x2+x1+x2,x1x2+x1+1,x1x2+x2+1,x1x2+1,1],fromList [x1,x2])
+--   </pre>
+dimacs2pols :: FilePath -> IO ()
+
+-- | <b>(main f)</b> is verified if the set of formulas in DIMACS format in
+--   the file <i>f</i> were satisfiable. Otherwise, <i>(main f)</i> would
+--   return False.
+--   
+--   <pre>
+--   &gt;&gt;&gt; main "exDIMACS/easy/example1.txt"
+--   True
+--   
+--   &gt;&gt;&gt; main "exDIMACS/easy/example4.txt"
+--   False
+--   </pre>
+main :: FilePath -> IO ()
