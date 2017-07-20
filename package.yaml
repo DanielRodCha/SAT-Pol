@@ -21,8 +21,6 @@ library:
   - Tool
   - Examples
   - ReadingF
-  - ToolS
-  - ToolSP
 tests:
   doctests:
     main: Doctest.hs

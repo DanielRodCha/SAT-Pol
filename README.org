@@ -1,3 +1,18 @@
-#+TITLE: Satisfacibilidad mediante polinomios
+#+TITLE: SAT-Solver based on Polynomials
 
-
+* exDIMACS
+This directory stores several examples of sets of formulas in DIMACS format. See [[DIMACS format][http://www.satcompetition.org/2009/format-benchmarks2009.html]] for further
+information about it.
+*** Trivial Examples
+**** example1
++ Corresponds to the formula (p^q)
++ It's True
+**** example2
++ Corresponds to the formula (p^q) v (¬p^q) 
++ It's True
+**** example3
++ Corresponds to the formula (p^q) v (¬p^q) v (p^¬q) 
++ It's True
+**** example4
++ Corresponds to the formula (p^q) v (¬p^q) v (p^¬q) v (¬p^¬q) 
++ It's False

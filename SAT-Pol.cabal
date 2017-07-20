@@ -31,8 +31,6 @@ library
       Tool
       Examples
       ReadingF
-      ToolS
-      ToolSP
   other-modules:
       Paths_SAT_Pol
   default-language: Haskell2010

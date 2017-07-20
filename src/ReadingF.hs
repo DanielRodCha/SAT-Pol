@@ -7,42 +7,34 @@ import Data.Char (isSpace)
 import Data.Foldable (sum, product)
 import System.Environment
 
-import Math.CommutativeAlgebra.Polynomial
-import Math.Core.Field (F2)
-import Math.Algebras.Structures
-import Math.Algebras.VectorSpace
-import Math.Algebras.TensorProduct
-import Math.Core.Utils (toSet)
-
-import PolAux
-import Tool (tool,varsList)
-import ToolS (toolS, toolSP')
-import ToolSP (toolSP)
-
 import qualified Data.Set as S
 
-main1 :: FilePath -> IO ()
-main1 f = do
-  s <- readFile f
-  print
-    $ nub
-    $ foldr (\x acc -> (((cleanExp . varFold . words) x):acc)) []
-    $ lines
-    $ s
+import PolAux (PolF2, expTo1, var, zerov)
+import Tool (tool)
 
--- main2 "/Users/danielrodriguezchavarria/Desktop/300/ReadingFiles/fil3.txt"
 
-main2 :: FilePath -> IO ()
-main2 f = do
-  s <- readFile f
-  print
-    $ tool
-    $ nub
-    $ foldr (\x acc -> (((cleanExp . varFold . words) x):acc)) []
-    $ lines
-    $ s 
+-- main1 :: FilePath -> IO ()
+-- main1 f = do
+--   s <- readFile f
+--   print
+--     $ nub
+--     $ foldr (\x acc -> (((cleanExp . varFold . words) x):acc)) []
+--     $ lines
+--     $ s
 
-cleanP (a,b) = (cleanExp a,b)
+-- -- main "/Users/danielrodriguezchavarria/Desktop/300/ReadingFiles/fil3.txt"
+
+-- main2 :: FilePath -> IO ()
+-- main2 f = do
+--   s <- readFile f
+--   print
+--     $ tool
+--     $ nub
+--     $ foldr (\x acc -> (((cleanExp . varFold . words) x):acc)) []
+--     $ lines
+--     $ s 
+
+cleanP (a,b) = (expTo1 a,b)
 
 insertP (a,b) (acc,vs) = (S.insert a acc, S.union vs b)
 
@@ -50,26 +42,26 @@ insertP' (a,b) (acc,vs) = (S.insert (a,b) acc, S.union vs b)
 
 main3 f = do
   s <- readFile f
-  print $ (foldr (\x acc -> (S.insert ((cleanExp . varFold . words) x) acc)) S.empty) $ lines $ s
+  print $ (foldr (\x acc -> (S.insert ((expTo1 . varFold . words) x) acc)) S.empty) $ lines $ s
 
 main3P f = do
   s <- readFile f
-  print $ (foldr (\x acc -> (insertP ((cleanP . varFoldP . words) x) acc)) (S.empty,S.empty)) $ lines $ s
+  print $ snd $ (foldr (\x acc -> (insertP ((cleanP . varFoldP . words) x) acc)) (S.empty,S.empty)) $ lines $ s
 -------------------------------------------------------------------------------
 
 -- main2 "/Users/danielrodriguezchavarria/Desktop/300/ReadingFiles/fil3.txt"
 
-main4 f = do
-  s <- readFile f
-  print $ toolS $ (foldr (\x acc -> (S.insert ((cleanExp . varFold . words) x) acc)) S.empty) $ lines $ s
+-- main4 f = do
+--   s <- readFile f
+--   print $ tool1 $ (foldr (\x acc -> (S.insert ((expTo1 . varFold . words) x) acc)) S.empty) $ lines $ s
 
 main4P f = do
   s <- readFile f
-  print $ toolSP' $ (foldr (\x acc -> (insertP ((cleanP . varFoldP . words) x) acc)) (S.empty,S.empty)) $ lines $ s
+  print $ tool $ (foldr (\x acc -> (insertP ((cleanP . varFoldP . words) x) acc)) (S.empty,S.empty)) $ lines $ s
 
-main4SP f = do
-  s <- readFile f
-  print $ toolSP $ (foldr (\x acc -> (insertP' ((cleanP . varFoldP . words) x) acc)) (S.empty,S.empty)) $ lines $ s
+-- main4SP f = do
+--   s <- readFile f
+--   print $ toolSP $ (foldr (\x acc -> (insertP' ((cleanP . varFoldP . words) x) acc)) (S.empty,S.empty)) $ lines $ s
 
 -------------------------------------------------------------------------------
   
@@ -85,11 +77,11 @@ main4SP f = do
 
 -- Si es FNC usar:
 
-varFold :: [String] -> Vect F2 (Lex String)
+varFold :: [String] -> PolF2
 varFold (x:xs) | x == "c" || x == "p" = 1
 varFold xs = foldl' (\acc x -> disj (var' x) acc) zerov xs
 
-varFoldP :: [String] -> (Vect F2 (Lex String), S.Set (Vect F2 (Lex String)))
+varFoldP :: [String] -> (PolF2, S.Set (PolF2))
 varFoldP (x:xs) | x == "c" || x == "p" = (1, S.empty)
 varFoldP xs = foldl' (\acc x -> disjP (var'P x) acc) (zerov,S.empty) xs
 
@@ -113,5 +105,5 @@ disj x y = x + y + x*y
 
 
 disjP (x,v) (y,vs) | v == zerov = (y,vs)
-                   | otherwise   = (disj x y, S.insert v vs)
+                   | otherwise   = (x + y + x*y, S.insert v vs)
 -------------------------------------------------------------------------------
