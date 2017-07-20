@@ -1,7 +1,7 @@
 #+TITLE: SAT-Solver based on Polynomials
 
 * exDIMACS
-This directory stores several examples of sets of formulas in DIMACS format. See [[DIMACS format][http://www.satcompetition.org/2009/format-benchmarks2009.html]] for further
+This directory stores several examples of sets of formulas in DIMACS format. See [[http://www.satcompetition.org/2009/format-benchmarks2009.html][DIMACS format]] for further
 information about it.
 *** Trivial Examples
 **** example1
