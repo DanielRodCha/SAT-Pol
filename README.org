@@ -1,6 +1,6 @@
 #+TITLE: SAT-Solver based on Polynomials
 
-* exDIMACS
+** exDIMACS
 This directory stores several examples of sets of formulas in DIMACS format. See [[http://www.satcompetition.org/2009/format-benchmarks2009.html][DIMACS format]] for further
 information about it.
 *** Trivial Examples
@@ -15,4 +15,28 @@ information about it.
 + It's True
 **** example4
 + Corresponds to the formula: (p ^ q) v (¬p ^ q) v (p ^ ¬q) v (¬p ^ ¬q)
++ It's False
+*** Medium Examples
+**** exampleSat0
+#+BEGIN_SRC hs :tangle yes
+λ> main "exDIMACS/medium/exampleSat0.txt"
+True
+(5.84 secs, 1,956,400,088 bytes)
+#+END_SRC
+
+**** exampleSat1
+**** exampleSat2
+**** exampleSat3
+*** Hard Examples
+**** sat100
++ Has 430 clauses
++ Has 100 variables
++ It's True
+**** sat250
++ Has 1065 clauses
++ Has 250 variables
++ It's True
+**** unsat250
++ Has 1065 clauses
++ Has 250 variables
 + It's False
