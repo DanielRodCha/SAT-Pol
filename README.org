@@ -5,14 +5,14 @@ This directory stores several examples of sets of formulas in DIMACS format. See
 information about it.
 *** Trivial Examples
 **** example1
-+ Corresponds to the formula (p^q)
++ Corresponds to the formula /(p^q)/
 + It's True
 **** example2
-+ Corresponds to the formula (p^q) v (¬p^q) 
++ Corresponds to the formula /(p^q) v (¬p^q)/
 + It's True
 **** example3
-+ Corresponds to the formula (p^q) v (¬p^q) v (p^¬q) 
++ Corresponds to the formula /(p^q) v (¬p^q) v (p^¬q)/
 + It's True
 **** example4
-+ Corresponds to the formula (p^q) v (¬p^q) v (p^¬q) v (¬p^¬q) 
++ Corresponds to the formula /(p^q) v (¬p^q) v (p^¬q) v (¬p^¬q)/
 + It's False
