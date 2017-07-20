@@ -23,8 +23,12 @@ information about it.
 True
 (5.84 secs, 1,956,400,088 bytes)
 #+END_SRC
-
 **** exampleSat1
+#+BEGIN_SRC hs :tangle yes
+λ> main "exDIMACS/medium/exampleSat1.txt"
+True
+(137.83 secs, 33,766,005,952 bytes)
+#+END_SRC
 **** exampleSat2
 **** exampleSat3
 *** Hard Examples
