@@ -86,6 +86,38 @@ module Tool
 --   </pre>
 tool :: (Set (PolF2), Set (PolF2)) -> Bool
 
+-- | (deltaRule v p1 p2) is the polynomial obtained from apply the
+--   independence rule described in the paper [?] between polynomials
+--   <i>p1</i> <i>p2</i> respect the variable <i>v</i>. It's important to
+--   note that as <i>v</i> is the variable from wich we derive, it won't
+--   occurs in the output polynomial. For example,
+--   
+--   <pre>
+--   &gt;&gt;&gt; deltaRule x1 1 1
+--   1
+--   
+--   &gt;&gt;&gt; deltaRule x1 1 0
+--   0
+--   
+--   &gt;&gt;&gt; deltaRule x1 x1 x1
+--   1
+--   </pre>
+deltaRule :: PolF2 -> PolF2 -> PolF2 -> PolF2
+
+-- | <b>(deltaRule1Step v pps acum)</b> is the union of the set
+--   <i>accum</i>, which ramains invariant, and the set of polynomials
+--   obtained after applying deltaRule respect <i>v</i> between every
+--   polynomial from set <i>pps</i>. For example,
+--   
+--   <pre>
+--   &gt;&gt;&gt; deltaRule1Step x1 (S.fromList [x1]) (S.fromList [1])
+--   fromList [1]
+--   
+--   &gt;&gt;&gt; deltaRule1Step x1 (S.fromList [x1,x1*x2,x1*x3]) (S.empty)
+--   fromList [x2x3,x2,x3,1]
+--   </pre>
+deltaRule1Step :: PolF2 -> Set (PolF2) -> Set (PolF2) -> Set (PolF2)
+
 module ReadingF
 
 -- | <b>(clause2pol cs)</b> is a pair <i>(p,vs)</i>, where <i>p</i> is the

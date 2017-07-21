@@ -5,6 +5,8 @@
 
 module Tool
     ( tool
+    , deltaRule
+    , deltaRule1Step
     ) where
 
 import Data.List (nub,iterate,partition, foldl', union)
