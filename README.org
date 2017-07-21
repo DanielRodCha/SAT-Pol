@@ -1,5 +1,13 @@
 #+TITLE: SAT-Solver based on Polynomials
 
+The project aims to solve the famous SAT problem in a efficient way. In order
+to do that it's used a different algorithm based on transforming
+propositional logic formulas into polynomials and then use the independence
+rule (or delta rule). There is further information obout the algorithm in this
+[[ ][paper?]].
+
+The documentation about the modules it's hosted [[https://danielrodcha.github.io/SAT-Pol/][here]].
+
 ** exDIMACS
 This directory stores several examples of sets of formulas in DIMACS format. See [[http://www.satcompetition.org/2009/format-benchmarks2009.html][DIMACS format]] for further
 information about it.
