@@ -8,7 +8,7 @@ module PolAux
     , zerov
     ) where
 
-import Math.CommutativeAlgebra.Polynomial (Lex,var,mindices,lm, (%%))
+import Math.CommutativeAlgebra.Polynomial (Grevlex, Glex, Lex ,var,mindices,lm, (%%))
 import Math.Core.Field (F2)
 import Math.Algebras.VectorSpace (Vect, linear, zerov)
 
@@ -64,13 +64,13 @@ expTo1 v = linear (\m -> product [ var x | (x,i) <- mindices m]) v
 -- >>> derivMon exampleMonomial3 x1
 -- x2
 
-derivMon :: (Lex String) -> Vect F2 (Lex String) -> Vect F2 (Lex String)
+derivMon :: (Lex String) -> PolF2 -> PolF2
 derivMon m v
   | varDif `elem` mIndices =
       product [var x ^ i | (x,i) <- mIndices, x /= fst varDif]
   | otherwise =  0
   where mIndices = mindices m
-        varDif = head (mindices (lm v))
+        varDif   = head (mindices (lm v))
 
 -- | (__deriv p v__) is the derivative of the polynomial p with respect to the
 -- variable v. It's important to note that deriv only works if it applies to
