@@ -14,6 +14,7 @@ dependencies:
 - containers
 - hatt
 - doctest
+- criterion
 library:
   source-dirs: src
   exposed-modules:
@@ -28,3 +29,12 @@ tests:
     ghc-options: -threaded
     dependencies:
     - doctest-discover
+benchmarks:
+  bench-innit:
+    main: Main.hs
+    source-dirs:
+    - src
+    - bench
+    - exDIMACS
+    dependencies:
+    - criterion

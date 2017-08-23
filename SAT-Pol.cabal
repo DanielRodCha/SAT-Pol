@@ -26,6 +26,7 @@ library
     , containers
     , hatt
     , doctest
+    , criterion
   exposed-modules:
       PolAux
       Tool
@@ -47,5 +48,28 @@ test-suite doctests
     , containers
     , hatt
     , doctest
+    , criterion
     , doctest-discover
+  default-language: Haskell2010
+
+benchmark bench-innit
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  hs-source-dirs:
+      src
+    , bench
+    , exDIMACS
+  build-depends:
+      base >=4.7 && <5
+    , HaskellForMaths
+    , containers
+    , hatt
+    , doctest
+    , criterion
+    , criterion
+  other-modules:
+      Examples
+      PolAux
+      ReadingF
+      Tool
   default-language: Haskell2010
