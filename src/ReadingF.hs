@@ -10,7 +10,7 @@ import System.Environment
 import qualified Data.Set as S
 
 import PolAux (PolF2, expTo1, var, zerov)
-import Tool (tool)
+import Tool (tool, toolN)
 
 -------------------------------------------------------------------------------
 -- | __(clause2pol cs)__ is a pair /(p,vs)/, where /p/ is the polynomial that
@@ -91,3 +91,12 @@ main f = do
 
 -------------------------------------------------------------------------------
 
+mainN n f = do
+  s <- readFile f
+  print $
+    toolN n $
+      (foldr (\x acc -> (insertPol ((clause2pol . words) x) acc))
+             (S.empty,S.empty)) $
+        lines $
+          s
+   where insertPol (a,b) (acc,vs) = (S.insert  a acc, S.union vs b)

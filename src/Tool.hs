@@ -5,6 +5,7 @@
 
 module Tool
     ( tool
+    , toolN
     , deltaRule
     , deltaRule1Step
     ) where
@@ -91,3 +92,11 @@ tool (ps,vvs) | S.null vvs     = S.notMember 0 ps
                 --        | otherwise = v == head x
 -------------------------------------------------------------------------------
 
+toolN :: Int -> S.Set (PolF2) -> (S.Set (PolF2), Int)
+toolN n ps | S.member 0 ps  = (S.empty,n)
+                 | n == 0         = (ps,n)
+                 | S.null vvs     = (ps,n)
+                 | otherwise      = toolN (n-1) (ps',vs)
+          where (v,vs)    = vars $ S.findMin ps
+                (ps1,ps2) = S.partition (\p -> mdivides (lm v) (lm p)) ps
+                ps'       = deltaRule1Step v ps1 ps2
