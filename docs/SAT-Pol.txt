@@ -63,6 +63,8 @@ expTo1 :: PolF2 -> PolF2
 deriv :: PolF2 -> PolF2 -> PolF2
 var :: (Num k, MonomialConstructor m) => v -> Vect k (m v)
 zerov :: Vect k b
+mindices :: MonomialConstructor m => forall v. m v -> [(v, Int)]
+lm :: Vect b c -> c
 
 
 -- | This module aims to provide an efficient tool to solve the SAT
@@ -85,6 +87,8 @@ module Tool
 --   False
 --   </pre>
 tool :: (Set (PolF2), Set (PolF2)) -> Bool
+toolN :: Set (PolF2) -> Bool
+toolL :: (Set (PolF2), [PolF2]) -> Bool
 
 -- | (deltaRule v p1 p2) is the polynomial obtained from apply the
 --   independence rule described in the paper [?] between polynomials
@@ -117,6 +121,7 @@ deltaRule :: PolF2 -> PolF2 -> PolF2 -> PolF2
 --   fromList [x2x3,x2,x3,1]
 --   </pre>
 deltaRule1Step :: PolF2 -> Set (PolF2) -> Set (PolF2) -> Set (PolF2)
+next :: Set (Vect F2 (Lex String)) -> Set PolF2
 
 module ReadingF
 
@@ -175,3 +180,15 @@ dimacs2pols :: FilePath -> IO ()
 --   False
 --   </pre>
 main :: FilePath -> IO ()
+insertPol :: (Ord a, Ord a1) => (a1, Set a) -> (Set a1, Set a) -> (Set a1, Set a)
+variable2List :: (t, Set a) -> (t, [a])
+mainList :: FilePath -> IO ()
+var'' :: String -> PolF2
+clause2pol' :: [String] -> PolF2
+mainN :: FilePath -> IO ()
+leer :: FilePath -> IO ()
+fileSat0 :: [[Char]]
+fileSat00' :: Set PolF2
+fileSat00 :: (Set PolF2, Set PolF2)
+fileSat1 :: [[Char]]
+nextN :: (Num t, Eq t) => t -> Set PolF2 -> Set (Vect F2 (Lex String))

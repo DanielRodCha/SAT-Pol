@@ -8,4 +8,4 @@ extra-deps:
 - hatt-1.5.0.3
 - primitive-0.6.2.0
 - vector-0.12.0.1
-resolver: lts-8.22
+resolver: lts-9.3

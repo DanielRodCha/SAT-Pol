@@ -6,8 +6,10 @@
 module Tool
     ( tool
     , toolN
+    , toolL
     , deltaRule
     , deltaRule1Step
+    , next
     ) where
 
 import Data.List (nub,iterate,partition, foldl', union)
@@ -32,6 +34,9 @@ import qualified Data.Set as S
 -- 0
 -- >>> deltaRule x1 x1 x1
 -- 1
+
+-- x11x28x41+x11x28+x28x41+x28+1
+-- x11x68x77+x68x77+1
 
 deltaRule :: PolF2 -> PolF2 -> PolF2 -> PolF2
 deltaRule p a1 a2 = expTo1 (aux + a1a2 + aux2)
@@ -90,13 +95,38 @@ tool (ps,vvs) | S.null vvs     = S.notMember 0 ps
                 ps'       = deltaRule1Step v ps1 ps2
                 --aux x   | null x    = False
                 --        | otherwise = v == head x
+
+toolL :: (S.Set (PolF2),[PolF2]) -> Bool
+toolL (ps,[]) = S.notMember 0 ps
+toolL (ps,v:vs) | S.member 0 ps     = False
+                | otherwise      = toolL (nextL v ps, vs)
+
+nextL v ps = deltaRule1Step v ps1 ps2
+  where (ps1,ps2) = split' v ps
 -------------------------------------------------------------------------------
 
-toolN :: Int -> S.Set (PolF2) -> (S.Set (PolF2), Int)
-toolN n ps | S.member 0 ps  = (S.empty,n)
-                 | n == 0         = (ps,n)
-                 | S.null vvs     = (ps,n)
-                 | otherwise      = toolN (n-1) (ps',vs)
-          where (v,vs)    = vars $ S.findMin ps
-                (ps1,ps2) = S.partition (\p -> mdivides (lm v) (lm p)) ps
-                ps'       = deltaRule1Step v ps1 ps2
+toolN :: S.Set (PolF2) -> Bool
+toolN ps | S.member 0 ps          = False
+         | S.findMin ps == 1 = True
+         | otherwise      = toolN $ next ps
+          -- where v         = fst $ head $ mindices $ lm $ S.findMin ps
+          --       aux a     = (null a || v == (fst . head) a)
+          --       (ps1,ps2) = S.partition
+          --         (\p -> (aux . mindices . lm) p) ps
+          --       ps'       = deltaRule1Step (var v) ps1 ps2
+
+next ps = deltaRule1Step v ps1 ps2
+  where  v         = var $ fst $ head $ mindices $ lm $ S.findMin ps
+         (ps1,ps2) = split' v ps
+         --(ps1,ps2) = S.partition (\p -> ((v == ) . fst . head' . mindices .
+         -- lm) p) ps
+
+nextN 0 ps = ps
+nextN n ps = nextN (n-1) (next ps)
+
+split' v ps = aux $ S.splitMember v ps
+  where aux (a,False,b) = (a,b)
+        aux (a,_,b)     = (S.insert v a,b)
+
+head' []     = ("error",1)
+head' (x:xs) = x

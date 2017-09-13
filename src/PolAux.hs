@@ -6,6 +6,8 @@ module PolAux
     , deriv
     , var
     , zerov
+    , mindices
+    , lm
     ) where
 
 import Math.CommutativeAlgebra.Polynomial (Grevlex, Glex, Lex ,var,mindices,lm, (%%))
