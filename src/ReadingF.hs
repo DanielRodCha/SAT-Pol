@@ -76,12 +76,12 @@ dimacs2pols f = do
 -- | __(main f)__ is verified if the set of formulas in DIMACS format in the
 -- file /f/ were satisfiable. Otherwise, /(main f)/ would return False.
 --
--- >>> main "exDIMACS/easy/example1.txt"
+-- >>> main1 "exDIMACS/easy/example1.txt"
 -- True
--- >>> main "exDIMACS/easy/example4.txt"
+-- >>> main1 "exDIMACS/easy/example4.txt"
 -- False
 
-main f = do
+main1 f = do
   s <- readFile f
   print $
     tool $

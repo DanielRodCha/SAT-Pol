@@ -6,6 +6,4 @@ extra-deps:
 - HaskellForMaths-0.4.8
 - aeson-1.2.1.0
 - hatt-1.5.0.3
-- primitive-0.6.2.0
-- vector-0.12.0.1
 resolver: lts-9.3
