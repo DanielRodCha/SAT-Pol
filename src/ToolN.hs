@@ -3,12 +3,12 @@
 -- the researchers from the department of Computer Science and Artificial
 -- Intelligence at the University of Seville.
 
-module Tool
-    ( tool
+module ToolN
+    ( toolN
     , deltaRule
     , deltaRule1Step
-    , next
-    , nextRec
+    , nextN
+    , nextNRec
     ) where
 
 import Data.List (nub,iterate,partition, foldl', union)
@@ -84,18 +84,25 @@ deltaRule1Step v pps acum | S.null pps = acum
 -- We should think if there exists any way to use the lazy power in the search
 -- of zeros.
 
-tool :: (S.Set (PolF2), S.Set (PolF2)) -> Bool
-tool (ps,vvs) | S.null vvs     = S.notMember 0 ps
-              | S.member 0 ps  = False
-              | otherwise      = tool (next v ps,vs)
-          where (v,vs)    = S.deleteFindMin vvs
+toolN :: S.Set (PolF2) -> Bool
+toolN ps | S.member 0 ps          = False
+         | S.findMin ps == 1 = True
+         | otherwise      = toolN $ nextN ps
 
-next v ps = deltaRule1Step v ps1 ps2
-  where (ps1,ps2) = S.partition (\p -> mdivides (lm v) (lm p)) ps
+nextN ps = deltaRule1Step v ps1 ps2
+  where  v         = var $ fst $ head $ mindices $ lm $ S.findMin ps
+         (ps1,ps2) = split' v ps
+
+
+
+split' v ps = aux $ S.splitMember v ps
+  where aux (a,False,b) = (a,b)
+        aux (a,_,b)     = (S.insert v a,b)
+
+head' []     = ("error",1)
+head' (x:xs) = x
 
 -------------------------------------------------------------------------------
-nextRec 0 (ps,vvs) = ps
-nextRec n (ps,vvs) | S.null vvs = ps
-                   | otherwise = nextRec (n-1) (next v ps,vs)
-  where (v,vs) = S.deleteFindMin vvs
 
+nextNRec 0 ps = ps
+nextNRec n ps = nextNRec (n-1) (nextN ps)

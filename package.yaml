@@ -20,6 +20,8 @@ library:
   exposed-modules:
   - PolAux
   - Tool
+  - ToolL
+  - ToolN
   - Examples
   - ReadingF
 executables:

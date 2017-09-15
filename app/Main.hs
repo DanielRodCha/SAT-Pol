@@ -8,7 +8,8 @@ main :: IO ()
 main = do
   s <- readFile "exDIMACS/medium/exampleSat1.txt"
   print $
-    toolN $
-      (foldr (\x acc -> (S.insert ((clause2pol' . words) x) acc))
-             S.empty) $
-        lines s
+    tool $
+      (foldr (\x acc -> (insertPol ((clause2pol . words) x) acc))
+             (S.empty,S.empty)) $
+        lines $
+          s
