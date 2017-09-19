@@ -5,12 +5,13 @@ module PolAux
     , expTo1
     , deriv
     , var
+    ,vars
     , zerov
     , mindices
     , lm
     ) where
 
-import Math.CommutativeAlgebra.Polynomial (Grevlex, Glex, Lex ,var,mindices,lm, (%%))
+import Math.CommutativeAlgebra.Polynomial (Grevlex, Glex, Lex ,var,mindices,lm, (%%), vars)
 import Math.Core.Field (F2)
 import Math.Algebras.VectorSpace (Vect, linear, zerov)
 
