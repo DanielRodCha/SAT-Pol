@@ -14,7 +14,7 @@ import Math.CommutativeAlgebra.Polynomial (Grevlex, Glex, Lex ,var,mindices,lm, 
 import Math.Core.Field (F2)
 import Math.Algebras.VectorSpace (Vect, linear, zerov)
 
-import Examples
+import PolExamples
 
 -------------------------------------------------------------------------------
 -- | The data type PolF2 is the field of polynomial with coefficients in the

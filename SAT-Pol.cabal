@@ -29,11 +29,13 @@ library
     , criterion
   exposed-modules:
       PolAux
+      PolExamples
       Tool
-      ToolL
-      ToolN
+      ToolCount
       Examples
       ReadingF
+      LogicFunctions
+      LogicAux
   other-modules:
       Paths_SAT_Pol
   default-language: Haskell2010
@@ -53,11 +55,13 @@ executable sat0
     , criterion
   other-modules:
       Examples
+      LogicAux
+      LogicFunctions
       PolAux
+      PolExamples
       ReadingF
       Tool
-      ToolL
-      ToolN
+      ToolCount
   default-language: Haskell2010
 
 test-suite doctests
@@ -93,9 +97,11 @@ benchmark bench-innit
     , criterion
   other-modules:
       Examples
+      LogicAux
+      LogicFunctions
       PolAux
+      PolExamples
       ReadingF
       Tool
-      ToolL
-      ToolN
+      ToolCount
   default-language: Haskell2010

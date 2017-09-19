@@ -8,9 +8,9 @@
 
 -- | This module contains several examples in order to verify the good
 --   functioning of the other modules.
-module Examples
+module PolExamples
 x1 :: LexPoly F2 String
-example :: [LexPoly F2 String]
+examples :: [LexPoly F2 String]
 exampleSet :: Set (LexPoly F2 String)
 exampleMonomial1 :: Lex v
 exampleMonomial2 :: Lex [Char]
@@ -66,6 +66,57 @@ zerov :: Vect k b
 mindices :: MonomialConstructor m => forall v. m v -> [(v, Int)]
 lm :: Vect b c -> c
 
+module LogicAux
+newtype Var
+Var :: String -> Var
+data Expr
+Variable :: Var -> Expr
+Negation :: Expr -> Expr
+Conjunction :: Expr -> Expr -> Expr
+Disjunction :: Expr -> Expr -> Expr
+Conditional :: Expr -> Expr -> Expr
+Biconditional :: Expr -> Expr -> Expr
+
+-- | Represents expressions using only ASCII characters (the <a>show</a>
+--   function pretty-prints expressions using logical symbols only present
+--   in extended character sets).
+showAscii :: Expr -> String
+showBinaryConnective :: (Expr -> String) -> String -> Expr -> Expr -> String
+showBC :: String -> Expr -> Expr -> String
+showBCA :: String -> Expr -> Expr -> String
+variables :: Expr -> [Var]
+declaraVar :: (Num k, MonomialConstructor m) => Expr -> [Vect k (m Var)]
+instance GHC.Classes.Eq LogicAux.Expr
+instance GHC.Classes.Ord LogicAux.Var
+instance GHC.Classes.Eq LogicAux.Var
+instance GHC.Show.Show LogicAux.Var
+instance GHC.Show.Show LogicAux.Expr
+
+module LogicFunctions
+form2Pol :: Expr -> Vect F2 (Lex String)
+pol2Form :: MonomialConstructor m => Vect k (m String) -> Expr
+example :: Set (Vect F2 (Lex String))
+
+
+-- | This module contains several examples in order to verify the good
+--   functioning of the other modules.
+module Examples
+clause2pol :: [String] -> (PolF2, Set (PolF2))
+insertPol :: (Ord a, Ord a1) => (a1, Set a) -> (Set a1, Set a) -> (Set a1, Set a)
+var' :: String -> (PolF2, PolF2)
+fileSat0 :: [[Char]]
+fileSat00 :: (Set PolF2, Set PolF2)
+var'' :: String -> PolF2
+clause2pol' :: [String] -> PolF2
+variable2List :: (t, Set a) -> (t, [a])
+fileSat0' :: Set PolF2
+fileSat0'' :: (Set PolF2, Set PolF2)
+fileSat0''' :: (Set PolF2, [PolF2])
+fileSat1 :: [[Char]]
+fileSat1' :: Set PolF2
+fileSat1'' :: (Set PolF2, Set PolF2)
+fileSat1''' :: (Set PolF2, [PolF2])
+
 
 -- | This module aims to provide an efficient tool to solve the SAT
 --   problem. Both the algorithm and the implementation have been carried
@@ -78,14 +129,6 @@ module Tool
 --   function will return False if that set of formulas was unsatisfiable.
 --   Note that <i>vvs</i> is the set of variables which occurs in any
 --   polynomial from <i>ps</i>. For example,
---   
---   <pre>
---   &gt;&gt;&gt; tool (S.fromList[1],S.empty)
---   True
---   
---   &gt;&gt;&gt; tool (S.fromList[x1,x1+1],S.fromList[x1])
---   False
---   </pre>
 tool :: (Set (PolF2), Set (PolF2)) -> Bool
 
 -- | (deltaRule v p1 p2) is the polynomial obtained from apply the
@@ -127,112 +170,15 @@ nextRec :: (Num t, Eq t) => t -> (Set PolF2, Set PolF2) -> Set (Vect F2 (Lex Str
 --   problem. Both the algorithm and the implementation have been carried
 --   out by the researchers from the department of Computer Science and
 --   Artificial Intelligence at the University of Seville.
-module ToolL
+module ToolCount
 
 -- | <b>(tool (ps,vvs))</b> is verified if the original set of formulas
 --   which polynomials from <i>ps</i> came was satisfiable. Otherwise, the
 --   function will return False if that set of formulas was unsatisfiable.
 --   Note that <i>vvs</i> is the set of variables which occurs in any
 --   polynomial from <i>ps</i>. For example,
---   
---   <pre>
---   &gt;&gt;&gt; tool (S.fromList[1],S.empty)
---   True
---   
---   &gt;&gt;&gt; tool (S.fromList[x1,x1+1],S.fromList[x1])
---   False
---   </pre>
-toolL :: (Set (PolF2), [PolF2]) -> Bool
-
--- | (deltaRule v p1 p2) is the polynomial obtained from apply the
---   independence rule described in the paper [?] between polynomials
---   <i>p1</i> <i>p2</i> respect the variable <i>v</i>. It's important to
---   note that as <i>v</i> is the variable from wich we derive, it won't
---   occurs in the output polynomial. For example,
---   
---   <pre>
---   &gt;&gt;&gt; deltaRule x1 1 1
---   1
---   
---   &gt;&gt;&gt; deltaRule x1 1 0
---   0
---   
---   &gt;&gt;&gt; deltaRule x1 x1 x1
---   1
---   </pre>
-deltaRule :: PolF2 -> PolF2 -> PolF2 -> PolF2
-
--- | <b>(deltaRule1Step v pps acum)</b> is the union of the set
---   <i>accum</i>, which ramains invariant, and the set of polynomials
---   obtained after applying deltaRule respect <i>v</i> between every
---   polynomial from set <i>pps</i>. For example,
---   
---   <pre>
---   &gt;&gt;&gt; deltaRule1Step x1 (S.fromList [x1]) (S.fromList [1])
---   fromList [1]
---   
---   &gt;&gt;&gt; deltaRule1Step x1 (S.fromList [x1,x1*x2,x1*x3]) (S.empty)
---   fromList [x2x3,x2,x3,1]
---   </pre>
-deltaRule1Step :: PolF2 -> Set (PolF2) -> Set (PolF2) -> Set (PolF2)
-nextL :: PolF2 -> Set PolF2 -> Set PolF2
-nextLRec :: (Num t, Eq t) => t -> (Set PolF2, [Vect F2 (Lex String)]) -> (Set PolF2, [Vect F2 (Lex String)])
-
-
--- | This module aims to provide an efficient tool to solve the SAT
---   problem. Both the algorithm and the implementation have been carried
---   out by the researchers from the department of Computer Science and
---   Artificial Intelligence at the University of Seville.
-module ToolN
-
--- | <b>(tool (ps,vvs))</b> is verified if the original set of formulas
---   which polynomials from <i>ps</i> came was satisfiable. Otherwise, the
---   function will return False if that set of formulas was unsatisfiable.
---   Note that <i>vvs</i> is the set of variables which occurs in any
---   polynomial from <i>ps</i>. For example,
---   
---   <pre>
---   &gt;&gt;&gt; tool (S.fromList[1],S.empty)
---   True
---   
---   &gt;&gt;&gt; tool (S.fromList[x1,x1+1],S.fromList[x1])
---   False
---   </pre>
-toolN :: Set (PolF2) -> Bool
-
--- | (deltaRule v p1 p2) is the polynomial obtained from apply the
---   independence rule described in the paper [?] between polynomials
---   <i>p1</i> <i>p2</i> respect the variable <i>v</i>. It's important to
---   note that as <i>v</i> is the variable from wich we derive, it won't
---   occurs in the output polynomial. For example,
---   
---   <pre>
---   &gt;&gt;&gt; deltaRule x1 1 1
---   1
---   
---   &gt;&gt;&gt; deltaRule x1 1 0
---   0
---   
---   &gt;&gt;&gt; deltaRule x1 x1 x1
---   1
---   </pre>
-deltaRule :: PolF2 -> PolF2 -> PolF2 -> PolF2
-
--- | <b>(deltaRule1Step v pps acum)</b> is the union of the set
---   <i>accum</i>, which ramains invariant, and the set of polynomials
---   obtained after applying deltaRule respect <i>v</i> between every
---   polynomial from set <i>pps</i>. For example,
---   
---   <pre>
---   &gt;&gt;&gt; deltaRule1Step x1 (S.fromList [x1]) (S.fromList [1])
---   fromList [1]
---   
---   &gt;&gt;&gt; deltaRule1Step x1 (S.fromList [x1,x1*x2,x1*x3]) (S.empty)
---   fromList [x2x3,x2,x3,1]
---   </pre>
-deltaRule1Step :: PolF2 -> Set (PolF2) -> Set (PolF2) -> Set (PolF2)
-nextN :: Set (Vect F2 (Lex String)) -> Set PolF2
-nextNRec :: (Num t, Eq t) => t -> Set PolF2 -> Set (Vect F2 (Lex String))
+toolCount :: Integer -> (Set (PolF2), Set (PolF2)) -> (Bool, Integer)
+toolLC :: Integer -> (Set (PolF2), [PolF2]) -> (Bool, Integer)
 
 module ReadingF
 
@@ -291,14 +237,26 @@ dimacs2pols :: FilePath -> IO ()
 --   False
 --   </pre>
 main1 :: FilePath -> IO ()
+
+-- | <b>(mainCount f)</b> returns a pair where first component is verified
+--   if the set of formulas in DIMACS format in the file <i>f</i> were
+--   satisfiable; and the second component counts how many times the delta
+--   rule has been executed. &gt;&gt;&gt; mainCount
+--   "exDIMACS<i>easy</i>example1.txt" (True,1) &gt;&gt;&gt; mainCount
+--   "exDIMACS<i>easy</i>example2.txt" (True,4) &gt;&gt;&gt; mainCount
+--   "exDIMACS<i>easy</i>example3.txt" (True,7) &gt;&gt;&gt; mainCount
+--   "exDIMACS<i>easy</i>example4.txt" (False,12) &gt;&gt;&gt; mainCount
+--   "exDIMACS<i>medium</i>exampleSat0.txt" (True,302)
+mainCount :: FilePath -> IO ()
 insertPol :: (Ord a, Ord a1) => (a1, Set a) -> (Set a1, Set a) -> (Set a1, Set a)
 variable2List :: (t, Set a) -> (t, [a])
+variable2RevList :: (t, Set a) -> (t, [a])
 mainList :: FilePath -> IO ()
 var'' :: String -> PolF2
 clause2pol' :: [String] -> PolF2
-mainN :: FilePath -> IO ()
 leer :: FilePath -> IO ()
 fileSat0 :: [[Char]]
-fileSat00' :: Set PolF2
-fileSat00 :: (Set PolF2, Set PolF2)
+fileSat0' :: Set PolF2
+fileSat0'' :: (Set PolF2, Set PolF2)
+fileSat0''' :: (Set PolF2, [PolF2])
 fileSat1 :: [[Char]]

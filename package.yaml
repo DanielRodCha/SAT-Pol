@@ -19,11 +19,13 @@ library:
   source-dirs: src
   exposed-modules:
   - PolAux
+  - PolExamples
   - Tool
-  - ToolL
-  - ToolN
+  - ToolCount
   - Examples
   - ReadingF
+  - LogicFunctions
+  - LogicAux
 executables:
   sat0:
     main: Main.hs
