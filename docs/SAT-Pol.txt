@@ -62,6 +62,7 @@ expTo1 :: PolF2 -> PolF2
 --   (1+x1+x2+x1*x2) v x2+1 &gt;&gt;&gt; deriv (x1*x2+x1+x3*x4+1) v x2+1
 deriv :: PolF2 -> PolF2 -> PolF2
 var :: (Num k, MonomialConstructor m) => v -> Vect k (m v)
+vars :: (Num k, Ord k, MonomialConstructor m, Ord (m v)) => Vect k (m v) -> [Vect k (m v)]
 zerov :: Vect k b
 mindices :: MonomialConstructor m => forall v. m v -> [(v, Int)]
 lm :: Vect b c -> c
@@ -129,7 +130,15 @@ module Tool
 --   function will return False if that set of formulas was unsatisfiable.
 --   Note that <i>vvs</i> is the set of variables which occurs in any
 --   polynomial from <i>ps</i>. For example,
-tool :: (Set (PolF2), Set (PolF2)) -> Bool
+--   
+--   <pre>
+--   &gt;&gt;&gt; tool (S.fromList[1],[])
+--   True
+--   
+--   &gt;&gt;&gt; tool (S.fromList[x1,x1+1],[x1])
+--   False
+--   </pre>
+tool :: (Set PolF2, [PolF2]) -> Bool
 
 -- | (deltaRule v p1 p2) is the polynomial obtained from apply the
 --   independence rule described in the paper [?] between polynomials
@@ -161,9 +170,15 @@ deltaRule :: PolF2 -> PolF2 -> PolF2 -> PolF2
 --   &gt;&gt;&gt; deltaRule1Step x1 (S.fromList [x1,x1*x2,x1*x3]) (S.empty)
 --   fromList [x2x3,x2,x3,1]
 --   </pre>
-deltaRule1Step :: PolF2 -> Set (PolF2) -> Set (PolF2) -> Set (PolF2)
-next :: PolF2 -> Set (Vect F2 (Lex String)) -> Set PolF2
-nextRec :: (Num t, Eq t) => t -> (Set PolF2, Set PolF2) -> Set (Vect F2 (Lex String))
+deltaRule1Step :: PolF2 -> Set PolF2 -> Set PolF2 -> Set PolF2
+
+-- | <b>(next v ps)</b> is the set of polynomials obtained after applying
+--   deltaRule respect <i>v</i> between every polynomial from <i>ps</i>,
+--   except if a zero is obtained, in which case the process is stopped and
+--   the calculation is not continued. For example, &gt;&gt;&gt; next x2
+--   (S.fromList [x2,x1*x2,x1+1]) fromList [x1,x1+1,1] &gt;&gt;&gt; next x1
+--   (S.fromList [x1,x1+1,1]) fromList [0,1]
+next :: PolF2 -> Set PolF2 -> Set PolF2
 
 
 -- | This module aims to provide an efficient tool to solve the SAT
@@ -211,52 +226,95 @@ clause2pol :: [String] -> (PolF2, Set (PolF2))
 --   </pre>
 var' :: String -> (PolF2, PolF2)
 
+-- | <b>(variable2List (a,b))</b> returns a pair which first element
+--   remains unchanged and the second is the list of elements of set
+--   <i>b</i>. For example, &gt;&gt;&gt; variable2List (1,S.empty) (1,[])
+--   &gt;&gt;&gt; variable2List (x1,S.fromList[0,2]) (x1,[0,2])
+variable2List :: (t, Set a) -> (t, [a])
+
+-- | <b>(insertPol (a,b) (acc,vs))</b> is a pair which first element is set
+--   <i>acc</i> plus element <i>a</i> and the second is the union of set
+--   <i>vs</i> and set <i>b</i>. For example, &gt;&gt;&gt; insertPol
+--   (x1,S.fromList[x1]) (S.empty,S.empty) (fromList [x1],fromList [x1])
+--   &gt;&gt;&gt; insertPol (x1*x2,S.fromList[x1,x2])
+--   (S.fromList[x1],S.fromList[x1]) (fromList [x1x2,x1],fromList [x1,x2])
+--   &gt;&gt;&gt; insertPol (x1,S.fromList[x1])
+--   (S.fromList[x1*x2],S.fromList[x1,x2]) (fromList [x1x2,x1],fromList
+--   [x1,x2])
+insertPol :: (PolF2, Set PolF2) -> (Set PolF2, Set PolF2) -> (Set PolF2, Set PolF2)
+
+-- | <b>(hasV v p)</b> is 1 if <i>p</i> has the variable <i>v</i> otherwise
+--   it is 0. For example, &gt;&gt;&gt; hasV x1 x1 1 &gt;&gt;&gt; hasV x2
+--   (x1+1) 0 &gt;&gt;&gt; hasV x1 (x1*x2+1) 1
+hasV :: PolF2 -> PolF2 -> Int
+
+-- | <b>(counting (ps,vvs) cs)</b> is a list of ordered pairs in which the
+--   first element is a variable from <i>vvs</i> and the second indicates
+--   in how many polynomials of the set <i>ps</i> this variable occurs. For
+--   example, &gt;&gt;&gt; counting (S.empty, []) [] [] &gt;&gt;&gt;
+--   counting (S.fromList [x1*x2,x1,x1+1,x2], [x1,x2]) [] [(x2,2),(x1,3)]
+--   &gt;&gt;&gt; counting (S.fromList [x1], [x1,x2,x3]) []
+--   [(x3,0),(x2,0),(x1,1)]
+counting :: (Set (PolF2), [PolF2]) -> [(PolF2, Int)] -> [(PolF2, Int)]
+
 -- | <b>(dimacs2pols f)</b> is the pair (<i>ps</i>,<i>vs</i>) where ps is
 --   the set of polynomials wich corresponds to the formula in DIMACS
---   format writed in the file <i>f</i> and <i>vs</i> is the set of
---   variables wich occurs in any polynomial.
---   
---   <pre>
---   &gt;&gt;&gt; dimacs2pols "exDIMACS/easy/example1.txt"
---   (fromList [x1x2+x1+x2,1],fromList [x1,x2])
---   
---   &gt;&gt;&gt; dimacs2pols "exDIMACS/easy/example4.txt"
---   (fromList [x1x2+x1+x2,x1x2+x1+1,x1x2+x2+1,x1x2+1,1],fromList [x1,x2])
---   </pre>
+--   format writed in the file <i>f</i> and <i>vs</i> is the list of
+--   variables wich occurs in any polynomial. &gt;&gt;&gt; dimacs2pols
+--   "exDIMACS<i>easy</i>example1.txt" (fromList [x1x2+x1+x2,1],[x1,x2])
+--   &gt;&gt;&gt; dimacs2pols "exDIMACS<i>easy</i>example2.txt" (fromList
+--   [x1x2+x1+x2,x1x2+x1+1,1],[x1,x2]) &gt;&gt;&gt; dimacs2pols
+--   "exDIMACS<i>easy</i>example3.txt" (fromList
+--   [x1x2+x1+x2,x1x2+x1+1,x1x2+x2+1,1],[x1,x2]) &gt;&gt;&gt; dimacs2pols
+--   "exDIMACS<i>easy</i>example4.txt" (fromList
+--   [x1x2+x1+x2,x1x2+x1+1,x1x2+x2+1,x1x2+1,1],[x1,x2])
 dimacs2pols :: FilePath -> IO ()
+
+-- | <b>(dimacs2pols f)</b> is the pair (n,m) where <i>n</i> is the size of
+--   the set of polynomials wich corresponds to the formula in DIMACS
+--   format writed in the file <i>f</i> and <i>m</i> is the length of the
+--   list of variables wich occurs in any polynomial. &gt;&gt;&gt;
+--   dimacs2polsSize "exDIMACS<i>easy</i>example1.txt" (2,2) &gt;&gt;&gt;
+--   dimacs2polsSize "exDIMACS<i>easy</i>example2.txt" (3,2) &gt;&gt;&gt;
+--   dimacs2polsSize "exDIMACS<i>easy</i>example3.txt" (4,2) &gt;&gt;&gt;
+--   dimacs2polsSize "exDIMACS<i>easy</i>example4.txt" (5,2) &gt;&gt;&gt;
+--   dimacs2polsSize "exDIMACS<i>hard</i>sat100.cnf" (431,100) &gt;&gt;&gt;
+--   dimacs2polsSize "exDIMACS<i>hard</i>sat250.cnf" (1066,250)
+dimacs2polsSize :: FilePath -> IO ()
 
 -- | <b>(main f)</b> is verified if the set of formulas in DIMACS format in
 --   the file <i>f</i> were satisfiable. Otherwise, <i>(main f)</i> would
 --   return False.
 --   
 --   <pre>
---   &gt;&gt;&gt; main1 "exDIMACS/easy/example1.txt"
+--   &gt;&gt;&gt; main "exDIMACS/easy/example1.txt"
 --   True
 --   
---   &gt;&gt;&gt; main1 "exDIMACS/easy/example4.txt"
+--   &gt;&gt;&gt; main "exDIMACS/easy/example2.txt"
+--   True
+--   
+--   &gt;&gt;&gt; main "exDIMACS/easy/example3.txt"
+--   True
+--   
+--   &gt;&gt;&gt; main "exDIMACS/easy/example4.txt"
 --   False
+--   
+--   &gt;&gt;&gt; main "exDIMACS/medium/exampleSat0.txt"
+--   True
+--   
+--   &gt;&gt;&gt; main "exDIMACS/medium/exampleSat1.txt"
+--   True
 --   </pre>
-main1 :: FilePath -> IO ()
+main :: FilePath -> IO ()
 
 -- | <b>(mainCount f)</b> returns a pair where first component is verified
 --   if the set of formulas in DIMACS format in the file <i>f</i> were
 --   satisfiable; and the second component counts how many times the delta
 --   rule has been executed. &gt;&gt;&gt; mainCount
 --   "exDIMACS<i>easy</i>example1.txt" (True,1) &gt;&gt;&gt; mainCount
---   "exDIMACS<i>easy</i>example2.txt" (True,4) &gt;&gt;&gt; mainCount
+--   "exDIMACS<i>easy</i>example2.txt" (True,3) &gt;&gt;&gt; mainCount
 --   "exDIMACS<i>easy</i>example3.txt" (True,7) &gt;&gt;&gt; mainCount
 --   "exDIMACS<i>easy</i>example4.txt" (False,12) &gt;&gt;&gt; mainCount
---   "exDIMACS<i>medium</i>exampleSat0.txt" (True,302)
+--   "exDIMACS<i>medium</i>exampleSat0.txt" (True,114) &gt;&gt;&gt;
+--   mainCount "exDIMACS<i>medium</i>exampleSat1.txt" (True,142)
 mainCount :: FilePath -> IO ()
-insertPol :: (Ord a, Ord a1) => (a1, Set a) -> (Set a1, Set a) -> (Set a1, Set a)
-variable2List :: (t, Set a) -> (t, [a])
-variable2RevList :: (t, Set a) -> (t, [a])
-mainList :: FilePath -> IO ()
-var'' :: String -> PolF2
-clause2pol' :: [String] -> PolF2
-leer :: FilePath -> IO ()
-fileSat0 :: [[Char]]
-fileSat0' :: Set PolF2
-fileSat0'' :: (Set PolF2, Set PolF2)
-fileSat0''' :: (Set PolF2, [PolF2])
-fileSat1 :: [[Char]]

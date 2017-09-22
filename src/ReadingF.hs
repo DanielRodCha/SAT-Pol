@@ -9,12 +9,11 @@ import System.Environment
 
 import qualified Data.Set as S
 
-import PolAux (PolF2, expTo1, var, zerov)
+import PolExamples (x1,x2,x3)
+import PolAux (PolF2, expTo1, var, zerov, vars)
 import Math.CommutativeAlgebra.Polynomial (lexvar)
 import Tool (tool, next)
---import ToolL (toolL, nextL, nextLRec)
---import ToolN (toolN, nextN, nextNRec)
-import ToolCount (toolCount, toolLC, counting)
+import ToolCount (toolCount, toolLC)
 
 -------------------------------------------------------------------------------
 -- | __(clause2pol cs)__ is a pair /(p,vs)/, where /p/ is the polynomial that
@@ -55,46 +54,139 @@ var' ('-':lit) = (1 + x,x)
 var' lit       = (x,x)
                    where x = var ('x':lit)
 
+
+
+-------------------------------------------------------------------------------
+
+-- | __(variable2List (a,b))__ returns a pair which first element remains
+-- unchanged and the second is the list of elements of set /b/. For example,
+-- >>> variable2List (1,S.empty)
+-- (1,[])
+-- >>> variable2List (x1,S.fromList[0,2])
+-- (x1,[0,2])
+
+variable2List :: (t, S.Set a) -> (t, [a])
+variable2List (a,b) = (a,S.toList b)
+
+-------------------------------------------------------------------------------
+
+-- | __(insertPol (a,b) (acc,vs))__ is a pair which first element is set /acc/
+-- plus element /a/ and the second is the union of set /vs/ and set /b/. For
+-- example,
+-- >>> insertPol (x1,S.fromList[x1]) (S.empty,S.empty) 
+-- (fromList [x1],fromList [x1])
+-- >>> insertPol (x1*x2,S.fromList[x1,x2]) (S.fromList[x1],S.fromList[x1])
+-- (fromList [x1x2,x1],fromList [x1,x2])
+-- >>> insertPol (x1,S.fromList[x1]) (S.fromList[x1*x2],S.fromList[x1,x2])
+-- (fromList [x1x2,x1],fromList [x1,x2])
+
+insertPol :: (PolF2, S.Set PolF2) -> (S.Set PolF2, S.Set PolF2) ->
+             (S.Set PolF2, S.Set PolF2)
+insertPol (a,b) (acc,vs) = (S.insert  a acc, S.union vs b)
+
+-------------------------------------------------------------------------------
+
+-- | __(hasV v p)__ is 1 if /p/ has the variable /v/ otherwise it is 0. For
+-- example,
+-- >>> hasV x1 x1
+-- 1
+-- >>> hasV x2 (x1+1)
+-- 0
+-- >>> hasV x1 (x1*x2+1)
+-- 1
+
+hasV :: PolF2 -> PolF2 -> Int
+hasV v p | elem v (vars p) = 1
+         | otherwise       = 0
+
+-------------------------------------------------------------------------------
+
+-- | __(counting (ps,vvs) cs)__ is a list of ordered pairs in which the first
+-- element is a variable from /vvs/ and the second indicates in how many
+-- polynomials of the set /ps/ this variable occurs. For example,
+-- >>> counting (S.empty, []) []
+-- []
+-- >>> counting (S.fromList [x1*x2,x1,x1+1,x2], [x1,x2]) []
+-- [(x2,2),(x1,3)]
+-- >>> counting (S.fromList [x1], [x1,x2,x3]) []
+-- [(x3,0),(x2,0),(x1,1)]
+
+counting :: (S.Set(PolF2),[PolF2]) -> [(PolF2,Int)] -> [(PolF2,Int)]
+counting (ps,[]) cs     = cs
+counting (ps,(v:vs)) cs = counting (ps,vs)
+  ([(v, (foldl (\acc x -> (hasV v x)+acc) 0 (S.toList ps)))] ++ cs)
+
 -------------------------------------------------------------------------------
 
 -- | __(dimacs2pols f)__ is the pair (/ps/,/vs/) where ps is the set of polynomials
 -- wich corresponds to the formula in DIMACS format writed in the file /f/ and
--- /vs/ is the set of variables wich occurs in any polynomial.
---
+-- /vs/ is the list of variables wich occurs in any polynomial.
 -- >>> dimacs2pols "exDIMACS/easy/example1.txt"
--- (fromList [x1x2+x1+x2,1],fromList [x1,x2])
+-- (fromList [x1x2+x1+x2,1],[x1,x2])
+-- >>> dimacs2pols "exDIMACS/easy/example2.txt"
+-- (fromList [x1x2+x1+x2,x1x2+x1+1,1],[x1,x2])
+-- >>> dimacs2pols "exDIMACS/easy/example3.txt"
+-- (fromList [x1x2+x1+x2,x1x2+x1+1,x1x2+x2+1,1],[x1,x2])
 -- >>> dimacs2pols "exDIMACS/easy/example4.txt"
--- (fromList [x1x2+x1+x2,x1x2+x1+1,x1x2+x2+1,x1x2+1,1],fromList [x1,x2])
+-- (fromList [x1x2+x1+x2,x1x2+x1+1,x1x2+x2+1,x1x2+1,1],[x1,x2])
 
 dimacs2pols f = do
-  s <- readFile f
-  print $ 
-    (foldr (\x acc -> (insertPol ((clause2pol . words) x) acc))
-           (S.empty,S.empty)) $
-      lines $
-        s
-     where insertPol (a,b) (acc,vs) = (S.insert a acc, S.union vs b)
+  s0 <- readFile f
+  let (s1,s2) = variable2List $ (foldr (\x acc -> (insertPol ((clause2pol . words) x) acc))
+             (S.empty,S.empty)) $ lines $ s0
+  let s3 = map fst $ sortOn snd $ counting (s1,s2) []
+  print $ (s1, s2)
+
+-------------------------------------------------------------------------------
+
+-- | __(dimacs2pols f)__ is the pair (n,m) where /n/ is the size of the set of
+-- polynomials wich corresponds to the formula in DIMACS format writed in the
+-- file /f/ and /m/ is the length of the list of variables wich occurs in any
+-- polynomial.
+-- >>> dimacs2polsSize "exDIMACS/easy/example1.txt"
+-- (2,2)
+-- >>> dimacs2polsSize "exDIMACS/easy/example2.txt"
+-- (3,2)
+-- >>> dimacs2polsSize "exDIMACS/easy/example3.txt"
+-- (4,2)
+-- >>> dimacs2polsSize "exDIMACS/easy/example4.txt"
+-- (5,2)
+-- >>> dimacs2polsSize "exDIMACS/hard/sat100.cnf"
+-- (431,100)
+-- >>> dimacs2polsSize "exDIMACS/hard/sat250.cnf"
+-- (1066,250)
+
+dimacs2polsSize f = do
+  s0 <- readFile f
+  let s1 = variable2List $ (foldr (\x acc -> (insertPol ((clause2pol . words) x) acc))
+             (S.empty,S.empty)) $ lines $ s0
+  let s2 = map fst $ sortOn snd $ counting s1 []
+  print $ (S.size (fst s1),length (s2))
            
 -------------------------------------------------------------------------------
 
 -- | __(main f)__ is verified if the set of formulas in DIMACS format in the
 -- file /f/ were satisfiable. Otherwise, /(main f)/ would return False.
 --
--- >>> main1 "exDIMACS/easy/example1.txt"
+-- >>> main "exDIMACS/easy/example1.txt"
 -- True
--- >>> main1 "exDIMACS/easy/example4.txt"
+-- >>> main "exDIMACS/easy/example2.txt"
+-- True
+-- >>> main "exDIMACS/easy/example3.txt"
+-- True
+-- >>> main "exDIMACS/easy/example4.txt"
 -- False
+-- >>> main "exDIMACS/medium/exampleSat0.txt"
+-- True
+-- >>> main "exDIMACS/medium/exampleSat1.txt"
+-- True
 
--- main1 "exDIMACS/medium/exampleSat0.txt"
-
--- main1 f = do
---   s <- readFile f
---   print $
---     tool $
---       (foldr (\x acc -> (insertPol ((clause2pol . words) x) acc))
---              (S.empty,S.empty)) $
---         lines $
---           s
+main f = do
+  s0 <- readFile f
+  let s1 = variable2List $ (foldr (\x acc -> (insertPol ((clause2pol . words) x) acc))
+             (S.empty,S.empty)) $ lines $ s0
+  let s2 = map fst $ sortOn snd $ counting s1 []
+  print $ tool (fst s1,s2)
 
 -- | __(mainCount f)__ returns a pair where first component is verified if the
 -- set of formulas in DIMACS format in the file /f/ were satisfiable; and the
@@ -102,92 +194,20 @@ dimacs2pols f = do
 -- >>> mainCount "exDIMACS/easy/example1.txt"
 -- (True,1)
 -- >>> mainCount "exDIMACS/easy/example2.txt"
--- (True,4)
+-- (True,3)
 -- >>> mainCount "exDIMACS/easy/example3.txt"
 -- (True,7)
 -- >>> mainCount "exDIMACS/easy/example4.txt"
 -- (False,12)
 -- >>> mainCount "exDIMACS/medium/exampleSat0.txt"
--- (True,302)
-
+-- (True,114)
 -- >>> mainCount "exDIMACS/medium/exampleSat1.txt"
--- (True,548)
+-- (True,142)
+-------------------------------------------------------------------------------
 
 mainCount f = do
-  s <- readFile f
-  print $
-    toolCount 0 $
-      (foldr (\x acc -> (insertPol ((clause2pol . words) x) acc))
-             (S.empty,S.empty)) $
-        lines $
-          s
-
-
-insertPol (a,b) (acc,vs) = (S.insert  a acc, S.union vs b)
-
-variable2List (a,b) = (a,S.toList b)
-
-variable2RevList (a,b) = (a,(reverse . S.toList) b)
-
-mainList f = do
-  s <- readFile f
-  print $
-    toolLC 0 $
-     variable2RevList $
-      (foldr (\x acc -> (insertPol ((clause2pol . words) x) acc))
-             (S.empty,S.empty)) $
-        lines $
-          s
-          
--------------------------------------------------------------------------------
-
-var'' :: String -> PolF2
-var'' "0"       = zerov
-var'' ('-':lit) = 1 + var ('x':lit)
-var'' lit       = var ('x':lit)
-
-clause2pol' :: [String] -> PolF2
-clause2pol' (c:cs) | c == "c" || c == "p" = 1
-clause2pol' cs = expTo1 $ foldl' (\acc x -> disj (var'' x) acc) zerov cs
-  where disj x y = x + y + x*y
-
-
--- mainN f = do
---   s <- readFile f
---   print $
---     toolN $
---       (foldr (\x acc -> (S.insert ((clause2pol' . words) x) acc))
---              S.empty) $
---         lines s
-
-leer f = do
-  s <- readFile f
-  print $ lines s
-
-fileSat0 = ["c This Formular is generated by mcnf","c","c    horn? no ","c    forced? no ","c    mixed sat? no ","c    clause length = 3 ","c","p cnf ? ?","30 -19 -3 0","89 31 -42 0","1 10 38 0","2 -21 -98 0","36 56 -78 0","14 -59 -87 0","89 -75 -86 0","-20 -80 4 0","-63 90 -55 0","59 75 9 0","-5 31 -97 0","48 -35 58 0","28 84 16 0","65 -4 94 0","-72 -23 7 0","18 -64 -55 0","-96 3 -35 0","89 -65 83 0","8 -60 -28 0","34 50 -14 0","64 -47 -35 0","-19 57 93 0","52 99 -94 0","-59 10 48 0","-78 -44 76 0","-63 -48 52 0","-88 84 -68 0","10 88 -76 0","92 -81 -88 0","66 44 42 0","-45 -98 74 0","-8 -84 -24 0","53 -75 -48 0","-6 70 50 0","90 75 -60 0","58 -60 -93 0","-71 64 73 0","54 92 -12 0","70 25 -59 0","-36 7 -42 0","-90 96 -16 0","72 -97 -35 0","-81 44 -66 0","82 14 10 0","8 -69 -33 0","6 54 -67 0","92 -8 -91 0","-99 32 -25 0","-50 5 83 0","85 53 84 0","-90 7 1 0","50 19 -44 0","21 43 27 0","-13 57 -55 0","-11 100 -52 0","42 -7 -60 0","78 -13 6 0","16 73 -92 0","92 30 -55 0","-47 36 -70 0","52 71 -95 0","99 90 70 0","53 -26 95 0","-43 59 -42 0","67 51 2 0","25 1 -19 0","10 2 -45 0","66 38 -60 0","52 -63 -13 0","-16 -19 80 0","-77 -68 11 0","70 89 25 0","80 -68 -75 0","11 -28 41 0","-1 92 -27 0","91 21 61 0","25 -84 28 0","-86 77 -97 0","-39 26 -1 0","88 49 69 0","-7 20 33 0","6 -45 32 0"]
-
-fileSat0'   = (foldr (\x acc -> (S.insert ((clause2pol' . words) x) acc)) S.empty) fileSat0
-fileSat0''  = (foldr (\x acc -> (insertPol ((clause2pol . words) x) acc)) (S.empty,S.empty)) fileSat0
-fileSat0''' = variable2List fileSat0''
-
-fileSat1 = ["c This Formular is generated by mcnf","c","c    horn? no ","c    forced? no ","c    mixed sat? no ","c    clause length = 3 ","c","p cnf ? ?","30 -19 -3 0","89 31 -42 0","1 10 38 0","2 -21 -98 0","36 56 -78 0","14 -59 -87 0","89 -75 -86 0","-20 -80 4 0","-63 90 -55 0","59 75 9 0","-5 31 -97 0","48 -35 58 0","28 84 16 0","65 -4 94 0","-72 -23 7 0","18 -64 -55 0","-96 3 -35 0","89 -65 83 0","8 -60 -28 0","34 50 -14 0","64 -47 -35 0","-19 57 93 0","52 99 -94 0","-59 10 48 0","-78 -44 76 0","-63 -48 52 0","-88 84 -68 0","10 88 -76 0","92 -81 -88 0","66 44 42 0","-45 -98 74 0","-8 -84 -24 0","53 -75 -48 0","-6 70 50 0","90 75 -60 0","58 -60 -93 0","-71 64 73 0","54 92 -12 0","70 25 -59 0","-36 7 -42 0","-90 96 -16 0","72 -97 -35 0","-81 44 -66 0","82 14 10 0","8 -69 -33 0","6 54 -67 0","92 -8 -91 0","-99 32 -25 0","-50 5 83 0","85 53 84 0","-90 7 1 0","50 19 -44 0","21 43 27 0","-13 57 -55 0","-11 100 -52 0","42 -7 -60 0","78 -13 6 0","16 73 -92 0","92 30 -55 0","-47 36 -70 0","52 71 -95 0","99 90 70 0","53 -26 95 0","-43 59 -42 0","67 51 2 0","25 1 -19 0","10 2 -45 0","66 38 -60 0","52 -63 -13 0","-16 -19 80 0","-77 -68 11 0","70 89 25 0","80 -68 -75 0","11 -28 41 0","-1 92 -27 0","91 21 61 0","25 -84 28 0","-86 77 -97 0","-39 26 -1 0","88 49 69 0","-7 20 33 0","6 -45 32 0","-63 80 6 0","32 -78 -48 0","-9 -44 -45 0","90 64 93 0","70 -37 -57 0","29 -33 -30 0","56 -24 47 0","98 65 48 0","16 -31 -69 0"]
-
-fileSat1'   = (foldr (\x acc -> (S.insert ((clause2pol' . words) x) acc)) S.empty) fileSat1
-fileSat1''  = (foldr (\x acc -> (insertPol ((clause2pol . words) x) acc)) (S.empty,S.empty)) fileSat1
-fileSat1''' = variable2List fileSat1''
-
--------------------------------------------------------------------------------
-
-mainLQuick f = do
   s0 <- readFile f
-  let s1 = variable2RevList $ (foldr (\x acc -> (insertPol ((clause2pol . words) x) acc))
+  let s1 = variable2List $ (foldr (\x acc -> (insertPol ((clause2pol . words) x) acc))
              (S.empty,S.empty)) $ lines $ s0
   let s2 = map fst $ sortOn snd $ counting s1 []
   print $ toolLC 0 (fst s1,s2)
-
-dimacs2polyL f = do
-  s0 <- readFile f
-  let s1 = variable2RevList $ (foldr (\x acc -> (insertPol ((clause2pol . words) x) acc))
-             (S.empty,S.empty)) $ lines $ s0
-  let s2 = map fst $ sortOn snd $ counting s1 []
-  print $ (S.size (fst s1),length (s2))

@@ -2,12 +2,12 @@ module Main where
 
 import qualified Data.Set as S
 import Data.List (sortOn)
-import ReadingF
-import ToolCount
+import ReadingF (variable2List, insertPol, clause2pol, counting)
+import Tool
 
 main = do
-  s0 <- readFile "exDIMACS/hard/unsat250.cnf"
-  let s1 = variable2RevList $ (foldr (\x acc -> (insertPol ((clause2pol . words) x) acc))
+  s0 <- readFile "exDIMACS/medium/exampleSat1.txt"
+  let s1 = variable2List $ (foldr (\x acc -> (insertPol ((clause2pol . words) x) acc))
              (S.empty,S.empty)) $ lines $ s0
   let s2 = map fst $ sortOn snd $ counting s1 []
-  print $ toolLC 0 (fst s1,s2)
+  print $ tool (fst s1,s2)
