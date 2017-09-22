@@ -60,6 +60,7 @@ var' lit       = (x,x)
 
 -- | __(variable2List (a,b))__ returns a pair which first element remains
 -- unchanged and the second is the list of elements of set /b/. For example,
+-- 
 -- >>> variable2List (1,S.empty)
 -- (1,[])
 -- >>> variable2List (x1,S.fromList[0,2])
@@ -73,6 +74,7 @@ variable2List (a,b) = (a,S.toList b)
 -- | __(insertPol (a,b) (acc,vs))__ is a pair which first element is set /acc/
 -- plus element /a/ and the second is the union of set /vs/ and set /b/. For
 -- example,
+--
 -- >>> insertPol (x1,S.fromList[x1]) (S.empty,S.empty) 
 -- (fromList [x1],fromList [x1])
 -- >>> insertPol (x1*x2,S.fromList[x1,x2]) (S.fromList[x1],S.fromList[x1])
@@ -88,6 +90,7 @@ insertPol (a,b) (acc,vs) = (S.insert  a acc, S.union vs b)
 
 -- | __(hasV v p)__ is 1 if /p/ has the variable /v/ otherwise it is 0. For
 -- example,
+--
 -- >>> hasV x1 x1
 -- 1
 -- >>> hasV x2 (x1+1)
@@ -104,6 +107,7 @@ hasV v p | elem v (vars p) = 1
 -- | __(counting (ps,vvs) cs)__ is a list of ordered pairs in which the first
 -- element is a variable from /vvs/ and the second indicates in how many
 -- polynomials of the set /ps/ this variable occurs. For example,
+--
 -- >>> counting (S.empty, []) []
 -- []
 -- >>> counting (S.fromList [x1*x2,x1,x1+1,x2], [x1,x2]) []
@@ -121,6 +125,7 @@ counting (ps,(v:vs)) cs = counting (ps,vs)
 -- | __(dimacs2pols f)__ is the pair (/ps/,/vs/) where ps is the set of polynomials
 -- wich corresponds to the formula in DIMACS format writed in the file /f/ and
 -- /vs/ is the list of variables wich occurs in any polynomial.
+--
 -- >>> dimacs2pols "exDIMACS/easy/example1.txt"
 -- (fromList [x1x2+x1+x2,1],[x1,x2])
 -- >>> dimacs2pols "exDIMACS/easy/example2.txt"
@@ -143,6 +148,7 @@ dimacs2pols f = do
 -- polynomials wich corresponds to the formula in DIMACS format writed in the
 -- file /f/ and /m/ is the length of the list of variables wich occurs in any
 -- polynomial.
+--
 -- >>> dimacs2polsSize "exDIMACS/easy/example1.txt"
 -- (2,2)
 -- >>> dimacs2polsSize "exDIMACS/easy/example2.txt"
@@ -191,6 +197,7 @@ main f = do
 -- | __(mainCount f)__ returns a pair where first component is verified if the
 -- set of formulas in DIMACS format in the file /f/ were satisfiable; and the
 -- second component counts how many times the delta rule has been executed.
+--
 -- >>> mainCount "exDIMACS/easy/example1.txt"
 -- (True,1)
 -- >>> mainCount "exDIMACS/easy/example2.txt"
