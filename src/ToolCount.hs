@@ -6,7 +6,6 @@
 module ToolCount
     ( toolCount
     , toolLC
-    , counting
     ) where
 
 import Data.List (nub,iterate,partition, foldl', union)
@@ -120,15 +119,7 @@ nextL v ps i = deltaRule1Step v ps1 ps2 i
 
 -------------------------------------------------------------------------------
 
-alreves (a,b) = (a, reverse b)
 
-estaV :: PolF2 -> PolF2 -> Int
-estaV v p | elem v (vars p) = 1
-          | otherwise       = 0
-
-counting :: (S.Set(PolF2),[PolF2]) -> [(PolF2,Int)] -> [(PolF2,Int)]
-counting (ps,[]) cs     = cs
-counting (ps,(v:vs)) cs = counting (ps,vs) ([(v,(foldl (\acc x -> (estaV v x)+acc) 0 (S.toList ps)))] ++ cs)
 -------------------------------------------------------------------------------
 
 -- nextRec 0 (ps,vvs) = ps

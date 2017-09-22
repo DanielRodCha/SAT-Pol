@@ -5,7 +5,7 @@ module PolAux
     , expTo1
     , deriv
     , var
-    ,vars
+    , vars
     , zerov
     , mindices
     , lm

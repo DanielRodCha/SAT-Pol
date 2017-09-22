@@ -8,7 +8,6 @@ module Tool
     , deltaRule
     , deltaRule1Step
     , next
-    , nextRec
     ) where
 
 import Data.List (nub,iterate,partition, foldl', union)
@@ -16,7 +15,7 @@ import Data.List (nub,iterate,partition, foldl', union)
 import PolAux
 import PolExamples
 import Examples
-import LogicFunctions (example)
+--import LogicFunctions (example)
 
 import Math.CommutativeAlgebra.Polynomial (mdivides,lm)
 
@@ -49,6 +48,28 @@ deltaRule p a1 a2 = expTo1 (aux + a1a2 + aux2)
         da1da2    = expTo1 da1*da2
         aux       = expTo1 (a1da2 + a2da1 + da1da2)
         aux2      = expTo1 (a1a2*aux)
+        
+-------------------------------------------------------------------------------
+
+-- | __(deltaRuleMiniStep v p ps acum)__ is the union of the set /accum/, which
+-- ramains invariant, and the set of polynomials obtained after applying
+-- deltaRule respect /v/ between polynomial /p/ and every polynomial from set
+-- /pps/, including itself. However, to improve efficiency the process is
+-- terminated if a zero occurs. This is because a zero in the polynomial
+-- set is sufficient for the tool to return False. For example,
+--
+-- >>> deltaRuleMiniStep x1 x1 (S.fromList [x1,x1*x2]) (S.fromList [1]) 
+-- fromList [x2,1]
+-- >>> deltaRuleMiniStep x1 x1 (S.fromList [x1,x1+1]) (S.fromList [1])
+-- fromList [0]
+
+deltaRuleMiniStep :: PolF2 -> PolF2 -> S.Set PolF2 -> S.Set PolF2 -> S.Set PolF2
+deltaRuleMiniStep v p ps acum | S.null ps = acum
+                              | dR == 0   = S.fromList [0]
+                              | otherwise = deltaRuleMiniStep v p ps'
+                                             (S.insert dR acum)
+  where (p',ps') = S.deleteFindMin ps
+        dR       = deltaRule v p p'
 
 -------------------------------------------------------------------------------
 
@@ -61,68 +82,65 @@ deltaRule p a1 a2 = expTo1 (aux + a1a2 + aux2)
 -- >>> deltaRule1Step x1 (S.fromList [x1,x1*x2,x1*x3]) (S.empty) 
 -- fromList [x2x3,x2,x3,1]
 
-deltaRule1Step :: PolF2 -> S.Set (PolF2) ->
-                  S.Set (PolF2) -> S.Set (PolF2)
+deltaRule1Step :: PolF2 -> S.Set PolF2 ->
+                  S.Set PolF2 -> S.Set PolF2
 deltaRule1Step v pps acum | S.null pps = acum
                           | otherwise  = deltaRule1Step v ps
                                          (deltaRuleMiniStep v p pps acum)
                           
   where (p,ps)   = S.deleteFindMin pps -- A pair form by the minimal element of
                                        -- a set and the original set without
-                                       -- it. 
---deltaRuleMiniStep v p pps acum = S.foldl' (\acc p'-> S.insert (deltaRule v p
---p') acc) acum pps
-deltaRuleMiniStep :: PolF2 -> PolF2 -> S.Set PolF2 -> S.Set PolF2 -> S.Set PolF2
-deltaRuleMiniStep v p ps acum | S.null ps = acum
-                              | dR == 0   = set0
-                              | otherwise = deltaRuleMiniStep v p ps'
-                                             (S.insert dR acum)
-  where (p',ps') = S.deleteFindMin ps
-        dR       = deltaRule v p p'
+                                       -- it.
+
 -------------------------------------------------------------------------------
-                                   
+
+-- | __(next v ps)__ is the set of polynomials obtained after applying
+-- deltaRule respect /v/ between every polynomial from /ps/, except if a zero
+-- is obtained, in which case the process is stopped and the calculation is not
+-- continued. For example,
+-- >>> next x2 (S.fromList [x2,x1*x2,x1+1])
+-- fromList [x1,x1+1,1]
+-- >>> next x1 (S.fromList [x1,x1+1,1])
+-- fromList [0,1]
+
+next :: PolF2 -> S.Set PolF2 -> S.Set PolF2
+next v ps = deltaRule1Step v ps1 ps2
+  where (ps1,ps2) = S.partition (\p -> mdivides lmv (lm p)) ps
+        lmv       = lm v
+
+-------------------------------------------------------------------------------                                   
 -- | __(tool (ps,vvs))__ is verified if the original set of formulas which
 -- polynomials from /ps/ came was satisfiable. Otherwise, the function will
 -- return False if that set of formulas was unsatisfiable. Note that /vvs/ is
 -- the set of variables which occurs in any polynomial from /ps/. For example,
 --
-
--- >>> tool (S.fromList[1],S.empty)
+-- >>> tool (S.fromList[1],[])
 -- True
--- >>> tool (S.fromList[x1,x1+1],S.fromList[x1])
+-- >>> tool (S.fromList[x1,x1+1],[x1])
 -- False
 
--- We should think if there exists any way to use the lazy power in the search
--- of zeros.
-
-tool :: (S.Set (PolF2), S.Set (PolF2)) -> Bool
-tool (ps,vvs) | S.null vvs     = S.notMember 0 ps
-              | ps == set0  = False
-              | otherwise      = tool (next v ps,vs)
-          where (v,vs)    = S.deleteFindMin vvs
-
-next v ps = deltaRule1Step v ps1 ps2
-  where (ps1,ps2) = S.partition (\p -> mdivides (lm v) (lm p)) ps
-        --(ps1,ps2) = S.split v ps
-        --aux (a,False,b) = (a,b)
-        --aux (a,_,b)     = (S.insert v a,b)
+tool :: (S.Set PolF2,[PolF2]) -> Bool
+tool (ps,[])                   = S.notMember 0 ps
+tool (ps,v:vs) | S.member 0 ps = False
+               | otherwise     = tool (next v ps, vs)
 
 -------------------------------------------------------------------------------
-nextRec 0 (ps,vvs) = ps
-nextRec n (ps,vvs) | S.null vvs = ps
-                   | otherwise = nextRec (n-1) (next v ps,vs)
-  where (v,vs) = S.deleteFindMin vvs
 
-set0 :: S.Set (PolF2)
-set0 = S.fromList [0]
 
-p1,p7,p9,p10 :: PolF2
-p1 = var "p1"
-p7 = var "p7"
-p9 = var "p9"
-p10 = var "p10"
+-- nextRec 0 (ps,vvs) = ps
+-- nextRec n (ps,vvs) | S.null vvs = ps
+--                    | otherwise = nextRec (n-1) (next v ps,vs)
+--   where (v,vs) = S.deleteFindMin vvs
 
-pa1,pa2 :: PolF2
-pa1 = p1*p10+p1+1
-pa2 = (p1*p7*p9+p1*p7+1)
+
+
+-- p1,p7,p9,p10 :: PolF2
+-- p1 = var "p1"
+-- p7 = var "p7"
+-- p9 = var "p9"
+-- p10 = var "p10"
+
+-- pa1,pa2 :: PolF2
+-- pa1 = p1*p10+p1+1
+-- pa2 = (p1*p7*p9+p1*p7+1)
 
