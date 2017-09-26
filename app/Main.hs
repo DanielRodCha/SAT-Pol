@@ -6,7 +6,7 @@ import ReadingF (variable2List, insertPol, clause2pol, counting)
 import Tool
 
 main = do
-  s0 <- readFile "exDIMACS/medium/exampleSat1.txt"
+  s0 <- readFile "exDIMACS/hard/sat100.cnf"
   let s1 = variable2List $ (foldr (\x acc -> (insertPol ((clause2pol . words) x) acc))
              (S.empty,S.empty)) $ lines $ s0
   let s2 = map fst $ sortOn snd $ counting s1 []

@@ -101,7 +101,7 @@ deltaRule1Step v pps acum | acum == set0 = set0
 -- >>> next x2 (S.fromList [x2,x1*x2,x1+1])
 -- fromList [x1,x1+1,1]
 -- >>> next x1 (S.fromList [x1,x1+1,1])
--- fromList [0,1]
+-- fromList [0]
 
 next :: PolF2 -> S.Set PolF2 -> S.Set PolF2
 next v ps = deltaRule1Step v ps1 ps2
