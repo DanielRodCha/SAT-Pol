@@ -101,8 +101,7 @@ toolCount i (ps,vvs) | S.null vvs = (S.notMember 0 ps,i)
                 (toolNext,i')     = next v ps i
 
 next v ps i = deltaRule1Step v ps1 ps2 i
-  where (ps1,ps2) = S.partition (\p -> mdivides lmv (lm p)) ps
-        lmv       = lm v
+  where (ps1,ps2) = S.partition (\p -> elem v (vars p)) ps
         --(ps1,ps2) = S.split v ps
         --aux (a,False,b) = (a,b)
         --aux (a,_,b)     = (S.insert v a,b)

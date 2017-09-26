@@ -74,7 +74,7 @@ derivMon m v
   | otherwise =  0
   where mIndices = mindices m
         varDif   = head (mindices (lm v))
-
+        
 -- | (__deriv p v__) is the derivative of the polynomial p with respect to the
 -- variable v. It's important to note that deriv only works if it applies to
 -- polynomials without exponents greater than 1. In practice, deriv will only

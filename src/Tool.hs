@@ -84,11 +84,11 @@ deltaRuleMiniStep v p ps acum | S.null ps = acum
 
 deltaRule1Step :: PolF2 -> S.Set PolF2 ->
                   S.Set PolF2 -> S.Set PolF2
-deltaRule1Step v pps acum | S.null pps = acum
-                          | otherwise  = deltaRule1Step v ps
-                                         (deltaRuleMiniStep v p pps acum)
-                          
-  where (p,ps)   = S.deleteFindMin pps -- A pair form by the minimal element of
+deltaRule1Step v pps acum | acum == set0 = set0
+                          | S.null pps   = acum
+                          | otherwise    = deltaRule1Step v ps
+                                           (deltaRuleMiniStep v p pps acum)
+  where (p,ps) = S.deleteFindMin pps -- A pair form by the minimal element of
                                        -- a set and the original set without
                                        -- it.
 
@@ -105,8 +105,7 @@ deltaRule1Step v pps acum | S.null pps = acum
 
 next :: PolF2 -> S.Set PolF2 -> S.Set PolF2
 next v ps = deltaRule1Step v ps1 ps2
-  where (ps1,ps2) = S.partition (\p -> mdivides lmv (lm p)) ps
-        lmv       = lm v
+  where (ps1,ps2) = S.partition (\p -> elem v (vars p)) ps
 
 -------------------------------------------------------------------------------                                   
 -- | __(tool (ps,vvs))__ is verified if the original set of formulas which
@@ -125,7 +124,8 @@ tool (ps,v:vs) | S.member 0 ps = False
                | otherwise     = tool (next v ps, vs)
 
 -------------------------------------------------------------------------------
-
+set0 :: S.Set PolF2
+set0 = S.fromList [0]
 
 -- nextRec 0 (ps,vvs) = ps
 -- nextRec n (ps,vvs) | S.null vvs = ps
