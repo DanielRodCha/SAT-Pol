@@ -13,7 +13,7 @@ import Data.List (nub,iterate,partition, foldl', union)
 import PolAux
 import PolExamples
 import Examples
-import LogicFunctions (example)
+--import LogicFunctions (example)
 
 import Math.CommutativeAlgebra.Polynomial (mdivides,lm)
 

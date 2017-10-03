@@ -66,6 +66,7 @@ vars :: (Num k, Ord k, MonomialConstructor m, Ord (m v)) => Vect k (m v) -> [Vec
 zerov :: Vect k b
 mindices :: MonomialConstructor m => forall v. m v -> [(v, Int)]
 lm :: Vect b c -> c
+lt :: Vect t1 t -> (t, t1)
 
 module LogicAux
 newtype Var
@@ -96,7 +97,12 @@ instance GHC.Show.Show LogicAux.Expr
 module LogicFunctions
 form2Pol :: Expr -> Vect F2 (Lex String)
 pol2Form :: MonomialConstructor m => Vect k (m String) -> Expr
-example :: Set (Vect F2 (Lex String))
+ex :: [Expr] -> Set PolF2
+kb :: [Expr]
+kb' :: [Expr]
+kb'' :: [Expr]
+kb5 :: Expr
+kb''' :: [Expr]
 
 
 -- | This module contains several examples in order to verify the good
@@ -117,6 +123,9 @@ fileSat1 :: [[Char]]
 fileSat1' :: Set PolF2
 fileSat1'' :: (Set PolF2, Set PolF2)
 fileSat1''' :: (Set PolF2, [PolF2])
+
+module Heuristics
+heuristics :: (Ord (m v), Ord k, MonomialConstructor m, Num k, Foldable t, Foldable t1) => t1 (Vect k (m v)) -> t (Vect k (m v)) -> [Vect k (m v)]
 
 
 -- | This module aims to provide an efficient tool to solve the SAT
@@ -179,6 +188,7 @@ deltaRule1Step :: PolF2 -> Set PolF2 -> Set PolF2 -> Set PolF2
 --   (S.fromList [x2,x1*x2,x1+1]) fromList [x1,x1+1,1] &gt;&gt;&gt; next x1
 --   (S.fromList [x1,x1+1,1]) fromList [0]
 next :: PolF2 -> Set PolF2 -> Set PolF2
+toolTrace :: (Set PolF2, [PolF2]) -> [(Set PolF2, PolF2)]
 
 
 -- | This module aims to provide an efficient tool to solve the SAT
@@ -294,18 +304,19 @@ counting :: (Set (PolF2), [PolF2]) -> [(PolF2, Int)] -> [(PolF2, Int)]
 --   
 --   <pre>
 --   &gt;&gt;&gt; dimacs2pols "exDIMACS/easy/example1.txt"
---   (fromList [x1x2+x1+x2,1],[x1,x2])
+--   (fromList [x1x2+x1+x2,1],[x2,x1])
 --   
 --   &gt;&gt;&gt; dimacs2pols "exDIMACS/easy/example2.txt"
---   (fromList [x1x2+x1+x2,x1x2+x1+1,1],[x1,x2])
+--   (fromList [x1x2+x1+x2,x1x2+x1+1,1],[x2,x1])
 --   
 --   &gt;&gt;&gt; dimacs2pols "exDIMACS/easy/example3.txt"
---   (fromList [x1x2+x1+x2,x1x2+x1+1,x1x2+x2+1,1],[x1,x2])
+--   (fromList [x1x2+x1+x2,x1x2+x1+1,x1x2+x2+1,1],[x2,x1])
 --   
 --   &gt;&gt;&gt; dimacs2pols "exDIMACS/easy/example4.txt"
---   (fromList [x1x2+x1+x2,x1x2+x1+1,x1x2+x2+1,x1x2+1,1],[x1,x2])
+--   (fromList [x1x2+x1+x2,x1x2+x1+1,x1x2+x2+1,x1x2+1,1],[x2,x1])
 --   </pre>
 dimacs2pols :: FilePath -> IO ()
+dimacs2pols' :: FilePath -> IO ()
 
 -- | <b>(dimacs2pols f)</b> is the pair (n,m) where <i>n</i> is the size of
 --   the set of polynomials wich corresponds to the formula in DIMACS
@@ -383,3 +394,4 @@ main :: FilePath -> IO ()
 --   (True,142)
 --   </pre>
 mainCount :: FilePath -> IO ()
+mainTrace :: [Expr] -> [PolF2] -> IO ()

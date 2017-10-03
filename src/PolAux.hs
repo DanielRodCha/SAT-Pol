@@ -9,11 +9,12 @@ module PolAux
     , zerov
     , mindices
     , lm
+    , lt
     ) where
 
-import Math.CommutativeAlgebra.Polynomial (Grevlex, Glex, Lex ,var,mindices,lm, (%%), vars)
+import Math.CommutativeAlgebra.Polynomial --(Grevlex, Glex, Lex ,var,mindices,lm,lt, (%%), vars)
 import Math.Core.Field (F2)
-import Math.Algebras.VectorSpace (Vect, linear, zerov)
+import Math.Algebras.VectorSpace --(Vect, linear, zerov, V)
 
 import PolExamples
 
@@ -90,4 +91,3 @@ derivMon m v
 
 deriv :: PolF2 -> PolF2 -> PolF2
 deriv p v = linear (`derivMon` v) p
-                       

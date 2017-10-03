@@ -23,6 +23,7 @@ library:
   - Tool
   - ToolCount
   - Examples
+  - Heuristics
   - ReadingF
   - LogicFunctions
   - LogicAux

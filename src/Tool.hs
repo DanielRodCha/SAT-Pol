@@ -8,6 +8,7 @@ module Tool
     , deltaRule
     , deltaRule1Step
     , next
+    , toolTrace
     ) where
 
 import Data.List (nub,iterate,partition, foldl', union)
@@ -15,6 +16,7 @@ import Data.List (nub,iterate,partition, foldl', union)
 import PolAux
 import PolExamples
 import Examples
+import Heuristics (heuristics)
 --import LogicFunctions (example)
 
 import Math.CommutativeAlgebra.Polynomial (mdivides,lm)
@@ -105,7 +107,7 @@ deltaRule1Step v pps acum | acum == set0 = set0
 
 next :: PolF2 -> S.Set PolF2 -> S.Set PolF2
 next v ps = deltaRule1Step v ps1 ps2
-  where (ps1,ps2) = S.partition (\p -> elem v (vars p)) ps
+       where (ps1,ps2) = S.partition (\p -> elem v (vars p)) ps
 
 -------------------------------------------------------------------------------                                   
 -- | __(tool (ps,vvs))__ is verified if the original set of formulas which
@@ -121,18 +123,25 @@ next v ps = deltaRule1Step v ps1 ps2
 tool :: (S.Set PolF2,[PolF2]) -> Bool
 tool (ps,[])                   = S.notMember 0 ps
 tool (ps,v:vs) | S.member 0 ps = False
-               | otherwise     = tool (next v ps, vs)
+               | otherwise     = tool (nextVPS, heuristics nextVPS vs)
+                 where nextVPS = next v ps
 
 -------------------------------------------------------------------------------
 set0 :: S.Set PolF2
 set0 = S.fromList [0]
 
--- nextRec 0 (ps,vvs) = ps
--- nextRec n (ps,vvs) | S.null vvs = ps
---                    | otherwise = nextRec (n-1) (next v ps,vs)
---   where (v,vs) = S.deleteFindMin vvs
+
+toolTrace (ps,[])   = [(ps,0)]
+toolTrace (ps,v:vs) | ps == set0 = [(ps,v)]
+                    | otherwise  = ((nextVPs,v):(toolTrace (nextVPs,vs)))
+                       where nextVPs = next v ps
 
 
+p,q,s,t :: PolF2
+p = var "p"
+q = var "q"
+s = var "s"
+t = var "t"
 
 -- p1,p7,p9,p10 :: PolF2
 -- p1 = var "p1"

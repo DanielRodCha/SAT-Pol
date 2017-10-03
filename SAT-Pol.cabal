@@ -33,6 +33,7 @@ library
       Tool
       ToolCount
       Examples
+      Heuristics
       ReadingF
       LogicFunctions
       LogicAux
@@ -55,6 +56,7 @@ executable sat0
     , criterion
   other-modules:
       Examples
+      Heuristics
       LogicAux
       LogicFunctions
       PolAux
@@ -97,6 +99,7 @@ benchmark bench-innit
     , criterion
   other-modules:
       Examples
+      Heuristics
       LogicAux
       LogicFunctions
       PolAux

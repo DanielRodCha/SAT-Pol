@@ -12,8 +12,11 @@ import qualified Data.Set as S
 import PolExamples (x1,x2,x3)
 import PolAux (PolF2, expTo1, var, zerov, vars)
 import Math.CommutativeAlgebra.Polynomial (lexvar)
-import Tool (tool, next)
+import Tool (tool, next, toolTrace)
 import ToolCount (toolCount, toolLC)
+import Heuristics (heuristics)
+
+import LogicFunctions (ex, kb, kb', kb'', kb5, kb''')
 
 -------------------------------------------------------------------------------
 -- | __(clause2pol cs)__ is a pair /(p,vs)/, where /p/ is the polynomial that
@@ -127,20 +130,29 @@ counting (ps,(v:vs)) cs = counting (ps,vs)
 -- /vs/ is the list of variables wich occurs in any polynomial.
 --
 -- >>> dimacs2pols "exDIMACS/easy/example1.txt"
--- (fromList [x1x2+x1+x2,1],[x1,x2])
+-- (fromList [x1x2+x1+x2,1],[x2,x1])
 -- >>> dimacs2pols "exDIMACS/easy/example2.txt"
--- (fromList [x1x2+x1+x2,x1x2+x1+1,1],[x1,x2])
+-- (fromList [x1x2+x1+x2,x1x2+x1+1,1],[x2,x1])
 -- >>> dimacs2pols "exDIMACS/easy/example3.txt"
--- (fromList [x1x2+x1+x2,x1x2+x1+1,x1x2+x2+1,1],[x1,x2])
+-- (fromList [x1x2+x1+x2,x1x2+x1+1,x1x2+x2+1,1],[x2,x1])
 -- >>> dimacs2pols "exDIMACS/easy/example4.txt"
--- (fromList [x1x2+x1+x2,x1x2+x1+1,x1x2+x2+1,x1x2+1,1],[x1,x2])
+-- (fromList [x1x2+x1+x2,x1x2+x1+1,x1x2+x2+1,x1x2+1,1],[x2,x1])
 
 dimacs2pols f = do
   s0 <- readFile f
   let (s1,s2) = variable2List $ (foldr (\x acc -> (insertPol ((clause2pol . words) x) acc))
              (S.empty,S.empty)) $ lines $ s0
-  let s3 = map fst $ sortOn snd $ counting (s1,s2) []
-  print $ (s1, s2)
+  let s3 = foldr (\x acc -> ((fst x):acc)) [] $ sortOn snd $ counting (s1,s2) []
+  --let s3 = map fst $ sortOn snd $ counting (s1,s2) []
+  print $ (s1,s3)
+
+dimacs2pols' f = do
+  s0 <- readFile f
+  let (s1,s2) = variable2List $ (foldr (\x acc -> (insertPol ((clause2pol . words) x) acc))
+             (S.empty,S.empty)) $ lines $ s0
+  let s3 = heuristics s1 s2
+  --let s3 = map fst $ sortOn snd $ counting (s1,s2) []
+  print $ (s1,s3)
 
 -------------------------------------------------------------------------------
 
@@ -218,3 +230,87 @@ mainCount f = do
              (S.empty,S.empty)) $ lines $ s0
   let s2 = map fst $ sortOn snd $ counting s1 []
   print $ toolLC 0 (fst s1,s2)
+
+-------------------------------------------------------------------------------
+--1ro
+-- mainTrace kb [var "p", var "q", var "t"]
+-- (fromList [pqrst+pqst+1,pt+s+1,qst+qt+1,rst+rt+1],[q,p,t])
+-- [(fromList [pt+s+1,rst+rt+1,1],q),
+-- (fromList [rst+rt+1,st+s+1,1],p),
+-- (fromList [1],t),
+-- (fromList [1],0)]
+
+---------------
+
+--2do
+-- (fromList [pqrst+pqst+1,pt+s+1,qst+qt+1,rst+rt+1],[r])
+-- [(fromList [pt+s+1,qst+qt+1,1],r),
+-- (fromList [pt+s+1,qst+qt+1,1],0)]
+
+---------------
+
+-- 3er
+-- tool (S.fromList [p*t+s+1,q*s*t+q*t+1,p*q*s*t+p*q*t],[p,q,s,t])
+-- False
+
+---------------
+
+-- mainTrace kb' [var "p1", var "p2", var "p3",var "p4",var "p5",var "p6",var "p7",var "p8",var "p10",var "p11"]
+-- (fromList [p1p10+p1+1,p1p11p7+p1p7+1,p1p9+p1+1,p10p2+p10+p2,p10p3+p3+1,p11p4+p4+1,p2p9+p2+p9,p2+1,p3p7+p3+1,p5p8+p5+1,p6p9+p6+1],[p8,p6,p5,p4,p11,p7,p3,p10,p2,p1])
+-- [(fromList
+-- [p1p10+p1+1,p1p11p7+p1p7+1,p1p9+p1+1,p10p2+p10+p2,p10p3+p3+1,p11p4+p4+1,p2p9+p2+p9,p2+1,p3p7+p3+1,p6p9+p6+1,1],p8),
+-- (fromList
+-- [p1p10+p1+1,p1p11p7+p1p7+1,p1p9+p1+1,p10p2+p10+p2,p10p3+p3+1,p11p4+p4+1,p2p9+p2+p9,p2+1,p3p7+p3+1,1],p6),
+-- (fromList
+-- [p1p10+p1+1,p1p11p7+p1p7+1,p1p9+p1+1,p10p2+p10+p2,p10p3+p3+1,p11p4+p4+1,p2p9+p2+p9,p2+1,p3p7+p3+1,1],p5),
+-- (fromList
+-- [p1p10+p1+1,p1p11p7+p1p7+1,p1p9+p1+1,p10p2+p10+p2,p10p3+p3+1,p2p9+p2+p9,p2+1,p3p7+p3+1,1],p4),
+-- (fromList
+-- [p1p10+p1+1,p1p9+p1+1,p10p2+p10+p2,p10p3+p3+1,p2p9+p2+p9,p2+1,p3p7+p3+1,1],p11),
+-- (fromList
+-- [p1p10+p1+1,p1p9+p1+1,p10p2+p10+p2,p10p3+p3+1,p2p9+p2+p9,p2+1,1],p7),
+-- (fromList [p1p10+p1+1,p1p9+p1+1,p10p2+p10+p2,p2p9+p2+p9,p2+1,1],p3),
+-- (fromList [p1p9+p1+1,p2p9+p2+p9,p2+1,1],p10),
+-- (fromList [p1p9+p1+1,p9,1],p2),
+-- (fromList [p9,1],p1),
+-- (fromList [p9,1],0)]
+
+---------------
+
+-- mainTrace kb'' [var "p1", var "p2", var "p3",var "p4",var "p5",var "p6",var "p8",var "p9",var "p10"]
+-- (fromList [p1p10+p1+1,p1p11p7+p1p7+1,p1p9+p1+1,p10p2+p10+p2,p10p3+p3+1,p11p4+p4+1,p2p9+p2+p9,p3p7+p3+1,p4,p5p8+p5+1,p6p9+p6+1],[p8,p6,p5,p4,p3,p2,p10,p9,p1])
+-- [(fromList [p1p10+p1+1, p1p11p7+p1p7+1, p1p9+p1+1, p10p2+p10+p2, p10p3+p3+1,
+-- p11p4+p4+1, p2p9+p2+p9, p3p7+p3+1, p4, p6p9+p6+1, 1],p8),
+-- (fromList [p1p10+p1+1, p1p11p7+p1p7+1, p1p9+p1+1, p10p2+p10+p2, p10p3+p3+1,
+-- p11p4+p4+1, p2p9+p2+p9, p3p7+p3+1, p4, 1],p6),
+-- (fromList [p1p10+p1+1, p1p11p7+p1p7+1, p1p9+p1+1, p10p2+p10+p2, p10p3+p3+1,
+-- p11p4+p4+1, p2p9+p2+p9,p3p7+p3+1,p4,1],p5),
+-- (fromList
+-- [p1p10+p1+1,p1p11p7+p1p7+1,p1p9+p1+1,p10p2+p10+p2,p10p3+p3+1,p11,p2p9+p2+p9,p3p7+p3+1,1],p4),
+-- (fromList [p1p10+p1+1, p1p11p7+p1p7+1, p1p9+p1+1, p10p2+p10+p2, p11,
+-- p2p9+p2+p9, 1],p3),
+-- (fromList [p1p10+p1+1,p1p11p7+p1p7+1,p1p9+p1+1,p11,1],p2),
+-- (fromList [p1p11p7+p1p7+1,p1p9+p1+1,p11,1],p10),
+-- (fromList [p1p11p7+p1p7+1,p11,1],p9),
+-- (fromList [p11,1],p1),
+-- (fromList [p11,1],0)]
+
+---------------
+
+-- mainTrace kb''' [var "p7",var "p8",var "p9",var "p10"]
+--(fromList
+--[p1p10+p1+1,p1p11p7+p1p7+1,p1p9+p1+1,p10p2+p10+p2,p10p3+p3+1,p11p4+p4+1,p2p9+p2+p9,p3p7+p3+1,p5p8+p5+1,p6p9+p6+1],[p8,p7,p10,p9])
+--
+--[(fromList
+--[p1p10+p1+1,p1p11p7+p1p7+1,p1p9+p1+1,p10p2+p10+p2,p10p3+p3+1,p11p4+p4+1,p2p9+p2+p9,p3p7+p3+1,p6p9+p6+1,1],p8),(fromList
+--[p1p10+p1+1,p1p11p3+p1p3+1,p1p9+p1+1,p10p2+p10+p2,p10p3+p3+1,p11p4+p4+1,p2p9+p2+p9,p6p9+p6+1,1],p7),(fromList
+--[p1p11p3+p1p3+1,p1p9+p1+1,p11p4+p4+1,p2p9+p2+p9,p6p9+p6+1,1],p10),(fromList
+--[p1p11p3+p1p3+1,p11p4+p4+1,1],p9),(fromList [p1p11p3+p1p3+1,p11p4+p4+1,1],0)]
+
+
+mainTrace xs ys = do
+  let s1 = (ex xs,ys)
+  let s2 = ys --map fst $ sortOn snd $ counting s1 []
+  print (fst s1,s2)
+  print $ toolTrace (fst s1,s2)
+
