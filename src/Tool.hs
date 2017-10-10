@@ -17,7 +17,7 @@ import PolAux
 import PolExamples
 import Examples
 import Heuristics (heuristics)
---import LogicFunctions (example)
+import LogicFunctions (palomar)
 
 import Math.CommutativeAlgebra.Polynomial (mdivides,lm)
 

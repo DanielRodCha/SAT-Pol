@@ -15,6 +15,8 @@ dependencies:
 - hatt
 - doctest
 - criterion
+- hspec
+- QuickCheck
 library:
   source-dirs: src
   exposed-modules:
@@ -35,6 +37,13 @@ executables:
     - src
     - exDIMACS
 tests:
+  spec:
+    main: Spec.hs
+    source-dirs:
+    - test
+    - src
+    dependencies:
+    - hspec
   doctests:
     main: Doctest.hs
     source-dirs: test

@@ -27,6 +27,8 @@ library
     , hatt
     , doctest
     , criterion
+    , hspec
+    , QuickCheck
   exposed-modules:
       PolAux
       PolExamples
@@ -54,6 +56,8 @@ executable sat0
     , hatt
     , doctest
     , criterion
+    , hspec
+    , QuickCheck
   other-modules:
       Examples
       Heuristics
@@ -79,7 +83,42 @@ test-suite doctests
     , hatt
     , doctest
     , criterion
+    , hspec
+    , QuickCheck
     , doctest-discover
+  other-modules:
+      PolAuxSpec
+      Spec
+  default-language: Haskell2010
+
+test-suite spec
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  hs-source-dirs:
+      test
+    , src
+  build-depends:
+      base >=4.7 && <5
+    , HaskellForMaths
+    , containers
+    , hatt
+    , doctest
+    , criterion
+    , hspec
+    , QuickCheck
+    , hspec
+  other-modules:
+      Doctest
+      PolAuxSpec
+      Examples
+      Heuristics
+      LogicAux
+      LogicFunctions
+      PolAux
+      PolExamples
+      ReadingF
+      Tool
+      ToolCount
   default-language: Haskell2010
 
 benchmark bench-innit
@@ -96,6 +135,8 @@ benchmark bench-innit
     , hatt
     , doctest
     , criterion
+    , hspec
+    , QuickCheck
     , criterion
   other-modules:
       Examples

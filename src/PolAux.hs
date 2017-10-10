@@ -2,6 +2,7 @@
 
 module PolAux
     ( PolF2
+    , VarF2
     , expTo1
     , deriv
     , var
@@ -10,11 +11,17 @@ module PolAux
     , mindices
     , lm
     , lt
+    , polGen
+    , varGen
+    , unbox
     ) where
 
 import Math.CommutativeAlgebra.Polynomial --(Grevlex, Glex, Lex ,var,mindices,lm,lt, (%%), vars)
 import Math.Core.Field (F2)
 import Math.Algebras.VectorSpace --(Vect, linear, zerov, V)
+
+import Data.Char (chr,intToDigit)
+import Test.QuickCheck
 
 import PolExamples
 
@@ -23,6 +30,50 @@ import PolExamples
 -- finite field F2.
 
 type PolF2 = Vect F2 (Lex String)
+
+instance Arbitrary PolF2 where
+  arbitrary = polGen
+
+newtype VarF2 = Box PolF2
+  deriving (Eq, Ord, Show)
+
+instance Arbitrary VarF2 where
+  arbitrary = varGen
+
+unbox :: VarF2 -> PolF2
+unbox (Box x) = x
+
+-------------------------------------------------------------------------------
+-- | varGen is a variable and exponent generator.
+
+varGen :: Gen VarF2
+varGen = do
+  n <- choose ((1::Int),100)
+  return (Box (var ('x':(show n))))
+
+-- | varExpGen is a variable and exponent generator.
+
+varExpGen :: Gen (PolF2,Int)
+varExpGen = do
+  Box x <- varGen
+  i <- choose ((1::Int),5)
+  return $ (x,i)
+
+-- | monGen is a monomial generator.
+
+monGen :: Gen PolF2
+monGen = do
+  n <- choose ((1::Int),5)
+  xs <- vectorOf n varExpGen
+  return $ product [ x ^ i | (x,i) <- xs]
+
+-- | polF2Gen is a polynomial generator
+
+polGen :: Gen PolF2
+polGen = do
+  n <- choose ((1::Int),5)
+  xs <- vectorOf n monGen
+  return $ sum xs
 
 -------------------------------------------------------------------------------
 

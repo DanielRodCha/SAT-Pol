@@ -6,7 +6,8 @@ module LogicFunctions
     , kb'
     , kb''
     , kb5
-    , kb''')
+    , kb'''
+    , palomar)
   where
 
 import Math.CommutativeAlgebra.Polynomial
@@ -19,6 +20,7 @@ import Math.Core.Utils (toSet)
 import LogicAux
 import PolAux
 
+import Data.Char
 import qualified Data.Set as S
 
 form2Pol :: Expr -> Vect F2 (Lex String)
@@ -94,4 +96,40 @@ kb5 = (Conditional (Conjunction (Variable (Var "p"))
         (Variable (Var "t")))) (Variable (Var "s")))
 
 kb = [kb1,kb2,kb3,kb4]
+-------------------------------------------------------------------------------
+
+variable :: String -> Expr
+variable xs = Variable (Var xs)
+
+conjuncion :: [Expr] -> Expr
+conjuncion xs = conjuncion' ys y
+                where (y:ys) = xs
+
+conjuncion' :: [Expr] -> Expr -> Expr
+conjuncion' [] acum = acum
+conjuncion' (x:xs) acum = conjuncion' xs (Conjunction x acum)
+
+disyuncion :: [Expr] -> Expr
+disyuncion xs = disyuncion' ys y
+                where (y:ys) = xs
+
+disyuncion' :: [Expr] -> Expr -> Expr
+disyuncion' [] acum = acum
+disyuncion' (x:xs) acum = disyuncion' xs (Disjunction x acum)
+
+-------------------------------------------------------------------------------
+
+palomar n m = example $ palomar' n m ++ palomarImp1 n m ++ palomarImp2 n m
+
+-- Cada paloma debe estar en algún palomar:
+palomar' n m = [(disyuncion . reverse) [varPalomar i j|j<-[1..m]]|i<- [1..n]]
+
+-- No puede haber 2 palomas en el mismo palomar:
+palomarImp1 n m = [Conditional (varPalomar i j) (Negation (varPalomar k j))|i<-[1..n], j<- [1..m], k<-[1..n],i /= k]
+
+-- Una paloma no puede estar en dos palomares distintos:
+palomarImp2 n m = [Conditional (varPalomar i j) (Negation (varPalomar i k))|i<-[1..n], j<- [1..m], k<-[1..m],k /= j]
+
+varPalomar n m = variable $ "P(" ++ (show n) ++ "," ++ (show m) ++ ")"
+
 
