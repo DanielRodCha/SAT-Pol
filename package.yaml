@@ -20,15 +20,15 @@ dependencies:
 library:
   source-dirs: src
   exposed-modules:
-  - PolAux
-  - PolExamples
-  - Tool
-  - ToolCount
-  - Examples
+  - Derivative
+  - F2
+  - Haskell4Maths
   - Heuristics
-  - ReadingF
-  - LogicFunctions
-  - LogicAux
+  - Logic
+  - Preprocessing
+  - Rule
+  - Saturation
+  - Transformations
 executables:
   sat0:
     main: Main.hs
@@ -38,15 +38,17 @@ executables:
     - exDIMACS
 tests:
   spec:
-    main: Spec.hs
+    main: Main.hs
     source-dirs:
-    - test
+    - test-spec
     - src
     dependencies:
     - hspec
   doctests:
-    main: Doctest.hs
-    source-dirs: test
+    main: Main.hs
+    source-dirs:
+    - test-doc
+    - src
     ghc-options: -threaded
     dependencies:
     - doctest-discover

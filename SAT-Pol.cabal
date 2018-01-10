@@ -1,6 +1,8 @@
--- This file has been generated from package.yaml by hpack version 0.14.0.
+-- This file has been generated from package.yaml by hpack version 0.20.0.
 --
 -- see: https://github.com/sol/hpack
+--
+-- hash: 2a467e38bfa51fa8533f33fec84ead06cdbd10c5d709de602023e740716c4a6d
 
 name:           SAT-Pol
 version:        0.1.0.0
@@ -21,24 +23,24 @@ library
   hs-source-dirs:
       src
   build-depends:
-      base >=4.7 && <5
-    , HaskellForMaths
-    , containers
-    , hatt
-    , doctest
-    , criterion
-    , hspec
+      HaskellForMaths
     , QuickCheck
+    , base >=4.7 && <5
+    , containers
+    , criterion
+    , doctest
+    , hatt
+    , hspec
   exposed-modules:
-      PolAux
-      PolExamples
-      Tool
-      ToolCount
-      Examples
+      Derivative
+      F2
+      Haskell4Maths
       Heuristics
-      ReadingF
-      LogicFunctions
-      LogicAux
+      Logic
+      Preprocessing
+      Rule
+      Saturation
+      Transformations
   other-modules:
       Paths_SAT_Pol
   default-language: Haskell2010
@@ -47,80 +49,90 @@ executable sat0
   main-is: Main.hs
   hs-source-dirs:
       app
-    , src
-    , exDIMACS
+      src
+      exDIMACS
   build-depends:
-      base >=4.7 && <5
-    , HaskellForMaths
-    , containers
-    , hatt
-    , doctest
-    , criterion
-    , hspec
+      HaskellForMaths
     , QuickCheck
+    , base >=4.7 && <5
+    , containers
+    , criterion
+    , doctest
+    , hatt
+    , hspec
   other-modules:
-      Examples
+      Derivative
+      F2
+      Haskell4Maths
       Heuristics
-      LogicAux
-      LogicFunctions
-      PolAux
-      PolExamples
-      ReadingF
-      Tool
-      ToolCount
+      Logic
+      Preprocessing
+      Rule
+      Saturation
+      Transformations
+      Paths_SAT_Pol
   default-language: Haskell2010
 
 test-suite doctests
   type: exitcode-stdio-1.0
-  main-is: Doctest.hs
+  main-is: Main.hs
   hs-source-dirs:
-      test
+      test-doc
+      src
   ghc-options: -threaded
   build-depends:
-      base >=4.7 && <5
-    , HaskellForMaths
-    , containers
-    , hatt
-    , doctest
-    , criterion
-    , hspec
+      HaskellForMaths
     , QuickCheck
+    , base >=4.7 && <5
+    , containers
+    , criterion
+    , doctest
     , doctest-discover
+    , hatt
+    , hspec
   other-modules:
-      PolAuxSpec
-      Spec
-      ToolSpec
+      Derivative
+      F2
+      Haskell4Maths
+      Heuristics
+      Logic
+      Preprocessing
+      Rule
+      Saturation
+      Transformations
+      Paths_SAT_Pol
   default-language: Haskell2010
 
 test-suite spec
   type: exitcode-stdio-1.0
-  main-is: Spec.hs
+  main-is: Main.hs
   hs-source-dirs:
-      test
-    , src
+      test-spec
+      src
   build-depends:
-      base >=4.7 && <5
-    , HaskellForMaths
-    , containers
-    , hatt
-    , doctest
-    , criterion
-    , hspec
+      HaskellForMaths
     , QuickCheck
+    , base >=4.7 && <5
+    , containers
+    , criterion
+    , doctest
+    , hatt
     , hspec
   other-modules:
-      Doctest
-      PolAuxSpec
-      ToolSpec
-      Examples
+      DerivativeSpec
+      F2Spec
+      RuleSpec
+      TransformationsSpec
+      Derivative
+      F2
+      Haskell4Maths
       Heuristics
-      LogicAux
-      LogicFunctions
-      PolAux
-      PolExamples
-      ReadingF
-      Tool
-      ToolCount
+      Logic
+      Preprocessing
+      Rule
+      Saturation
+      Transformations
+      Paths_SAT_Pol
   default-language: Haskell2010
 
 benchmark bench-innit
@@ -128,26 +140,26 @@ benchmark bench-innit
   main-is: Main.hs
   hs-source-dirs:
       src
-    , bench
-    , exDIMACS
+      bench
+      exDIMACS
   build-depends:
-      base >=4.7 && <5
-    , HaskellForMaths
-    , containers
-    , hatt
-    , doctest
-    , criterion
-    , hspec
+      HaskellForMaths
     , QuickCheck
+    , base >=4.7 && <5
+    , containers
     , criterion
+    , doctest
+    , hatt
+    , hspec
   other-modules:
-      Examples
+      Derivative
+      F2
+      Haskell4Maths
       Heuristics
-      LogicAux
-      LogicFunctions
-      PolAux
-      PolExamples
-      ReadingF
-      Tool
-      ToolCount
+      Logic
+      Preprocessing
+      Rule
+      Saturation
+      Transformations
+      Paths_SAT_Pol
   default-language: Haskell2010

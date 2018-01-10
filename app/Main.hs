@@ -1,13 +1,38 @@
 module Main where
 
-import qualified Data.Set as S
-import Data.List (sortOn)
-import ReadingF (variable2List, insertPol, clause2pol, counting)
-import Tool
+import Preprocessing (dimacs2Pols)
+import Saturation (saturateKB)
+import Heuristics
+
+import System.Environment
+
+-- | __(main f)__ is verified if the set of formulas in DIMACS format in the
+-- file /f/ were satisfiable. Otherwise, /(main f)/ would return False.
 
 main = do
-  s0 <- readFile "exDIMACS/medium/exampleSat3.txt"
-  let s1 = variable2List $ (foldr (\x acc -> (insertPol ((clause2pol . words) x) acc))
-             (S.empty,S.empty)) $ lines $ s0
-  let s2 = map fst $ sortOn snd $ counting s1 []
-  print $ tool (fst s1,s2)
+ let f = "exDIMACS/medium/exampleSat3.txt"
+ let h = frequency
+ putStrLn ("The satisfactibility of instance " ++ f ++
+           " solved by frequency heuristics is:")
+ f' <- dimacs2Pols f
+ let sol = saturateKB f' h
+ print sol
+ return sol
+
+
+-- aux :: Heuristics -> String
+-- aux monomialOrd = "monomialOrd"
+-- aux frequency = "frequency"
+-- aux revFreq = "reverse frequency"
+-- --showHeuristics ( _ _) = ""
+
+-- main = sat
+
+
+-- sat = do
+--   putStrLn "Which SAT instance do you want to solve?"
+--   f <- readLn
+--   f' <- dimacs2Pols f
+--   putStrLn "Which Heuristics do you want to use to?"
+--   h <- readLn
+--   return (saturateKB f' h)
