@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 2a467e38bfa51fa8533f33fec84ead06cdbd10c5d709de602023e740716c4a6d
+-- hash: 024afd199e1deffa1c0f07a6ed27f6fe7c8e29a8c87d93bb0297983c85a0abf3
 
 name:           SAT-Pol
 version:        0.1.0.0
@@ -41,6 +41,7 @@ library
       Rule
       Saturation
       Transformations
+      Subsumption
   other-modules:
       Paths_SAT_Pol
   default-language: Haskell2010
@@ -69,6 +70,7 @@ executable sat0
       Preprocessing
       Rule
       Saturation
+      Subsumption
       Transformations
       Paths_SAT_Pol
   default-language: Haskell2010
@@ -99,6 +101,7 @@ test-suite doctests
       Preprocessing
       Rule
       Saturation
+      Subsumption
       Transformations
       Paths_SAT_Pol
   default-language: Haskell2010
@@ -131,6 +134,7 @@ test-suite spec
       Preprocessing
       Rule
       Saturation
+      Subsumption
       Transformations
       Paths_SAT_Pol
   default-language: Haskell2010
@@ -160,6 +164,7 @@ benchmark bench-innit
       Preprocessing
       Rule
       Saturation
+      Subsumption
       Transformations
       Paths_SAT_Pol
   default-language: Haskell2010

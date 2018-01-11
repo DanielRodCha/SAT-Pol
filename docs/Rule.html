@@ -1,0 +1,21 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Rule</title><link href="ocean.css" rel="stylesheet" type="text/css" title="Ocean" /><script src="haddock-util.js" type="text/javascript"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script><script type="text/javascript">//<![CDATA[
+window.onload = function () {pageLoad();};
+//]]>
+</script></head><body><div id="package-header"><ul class="links" id="page-menu"><li><a href="src/Rule.html">Source</a></li><li><a href="index.html">Contents</a></li><li><a href="doc-index.html">Index</a></li></ul><p class="caption">SAT-Pol-0.1.0.0</p></div><div id="content"><div id="module-header"><table class="info"><tr><th>Safe Haskell</th><td>None</td></tr><tr><th>Language</th><td>Haskell2010</td></tr></table><p class="caption">Rule</p></div><div id="synopsis"><p id="control.syn" class="caption expander" onclick="toggleSection('syn')">Synopsis</p><ul id="section.syn" class="hide" onclick="toggleSection('syn')"><li class="src short"><a href="#v:independenceRule">independenceRule</a> :: <a href="F2.html#t:PolF2">PolF2</a> -&gt; <a href="F2.html#t:PolF2">PolF2</a> -&gt; <a href="F2.html#t:PolF2">PolF2</a> -&gt; <a href="F2.html#t:PolF2">PolF2</a></li><li class="src short"><a href="#v:independenceRuleForm">independenceRuleForm</a> :: <a href="Logic.html#t:VarProp">VarProp</a> -&gt; <a href="Logic.html#t:FProp">FProp</a> -&gt; <a href="Logic.html#t:FProp">FProp</a> -&gt; <a href="Logic.html#t:FProp">FProp</a></li></ul></div><div id="interface"><h1>Documentation</h1><div class="top"><p class="src"><a id="v:independenceRule" class="def">independenceRule</a> :: <a href="F2.html#t:PolF2">PolF2</a> -&gt; <a href="F2.html#t:PolF2">PolF2</a> -&gt; <a href="F2.html#t:PolF2">PolF2</a> -&gt; <a href="F2.html#t:PolF2">PolF2</a> <a href="src/Rule.html#independenceRule" class="link">Source</a> <a href="#v:independenceRule" class="selflink">#</a></p><div class="doc"><p>(independenceRule v p1 p2) is the polynomial obtained from apply the independence
+ rule described in the paper [?] between polynomials <em>p1</em> <em>p2</em> respect the
+ variable <em>v</em>. It's important to note that as <em>v</em> is the variable from wich we
+ derive, it won't occurs in the output polynomial. For example,</p><pre class="screen"><code class="prompt">&gt;&gt;&gt; </code><strong class="userinput"><code>[x1,x2,x3,x4] = (map var [&quot;x1&quot;,&quot;x2&quot;,&quot;x3&quot;,&quot;x4&quot;]) :: [PolF2]
+</code></strong><code class="prompt">&gt;&gt;&gt; </code><strong class="userinput"><code>independenceRule x1 1 1
+</code></strong>1
+<code class="prompt">&gt;&gt;&gt; </code><strong class="userinput"><code>independenceRule x1 1 0
+</code></strong>0
+<code class="prompt">&gt;&gt;&gt; </code><strong class="userinput"><code>independenceRule x1 x1 x1
+</code></strong>1
+<code class="prompt">&gt;&gt;&gt; </code><strong class="userinput"><code>independenceRule x1 x1 x1*x2
+</code></strong>x2
+<code class="prompt">&gt;&gt;&gt; </code><strong class="userinput"><code>independenceRule x1 (x1*x3) (x1*x2)
+</code></strong>x2x3
+<code class="prompt">&gt;&gt;&gt; </code><strong class="userinput"><code>independenceRule x1 (1+x1*x3) (x1*x2)
+</code></strong>x2x3+x2
+</pre></div></div><div class="top"><p class="src"><a id="v:independenceRuleForm" class="def">independenceRuleForm</a> :: <a href="Logic.html#t:VarProp">VarProp</a> -&gt; <a href="Logic.html#t:FProp">FProp</a> -&gt; <a href="Logic.html#t:FProp">FProp</a> -&gt; <a href="Logic.html#t:FProp">FProp</a> <a href="src/Rule.html#independenceRuleForm" class="link">Source</a> <a href="#v:independenceRuleForm" class="selflink">#</a></p><div class="doc"><p>Is the independence rule defined above but applied to
+ propositional formulas.</p></div></div></div></div><div id="footer"><p>Produced by <a href="http://www.haskell.org/haddock/">Haddock</a> version 2.18.1</p></div></body></html>

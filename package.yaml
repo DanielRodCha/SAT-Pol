@@ -29,6 +29,7 @@ library:
   - Rule
   - Saturation
   - Transformations
+  - Subsumption
 executables:
   sat0:
     main: Main.hs

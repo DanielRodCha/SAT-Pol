@@ -6,6 +6,7 @@ import Haskell4Maths (var
 import F2 (PolF2)
 import Rule (independenceRule)
 import Heuristics
+import Subsumption
 
 import System.Environment
 import qualified Data.Set as S
@@ -22,9 +23,10 @@ independenceRuleAux :: PolF2 -> PolF2 -> S.Set PolF2 ->
 independenceRuleAux v p ps acum
   | S.null ps = acum
   | dR == 0   = S.fromList [0]
-  | otherwise = independenceRuleAux v p ps' (S.insert dR acum)
+  | otherwise = independenceRuleAux v p ps' (S.insert dR acum')
                 where (p',ps') = S.deleteFindMin ps
                       dR       = independenceRule v p p'
+                      acum'    = removeDivisors dR acum
 
 -- | __(independenceRuleKB v pps acum)__ is the union of the set /accum/, which
 -- ramains invariant, and the set of polynomials obtained after applying

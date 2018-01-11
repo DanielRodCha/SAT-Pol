@@ -5,6 +5,7 @@ import Haskell4Maths (var
                      , zerov)
 import F2
 import Transformations ( phi)
+import Subsumption
 
 import Data.List (foldl')
 import qualified Data.Set as S
@@ -58,4 +59,4 @@ dimacs2Pols f = do
     aux1 $ (foldr (\x acc -> (aux2 ((clause2Pol . words) x) acc))
              (S.empty,S.empty)) $ lines $ s0
      where aux1 (a,b) = (a,S.toList b)
-           aux2 (a,b) (acc,vs) = (S.insert  a acc, S.union vs b)
+           aux2 (a,b) (acc',vs) = (S.insert a (removeDivisors a acc'), S.union vs b)
