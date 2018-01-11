@@ -254,7 +254,6 @@ prop_isConsequence k f =
    isConsequence k f == isInconsistent (S.insert (Neg f) k)
 
 -- | For example,
---
 -- >>> isConsequenceKB (S.fromList [p → q, q → r]) (S.fromList [p → q, p → r])
 -- True
 -- >>> isConsequenceKB (S.fromList [p]) (S.fromList [p ∧ q])
@@ -263,7 +262,6 @@ isConsequenceKB :: KB -> KB -> Bool
 isConsequenceKB k = all (isConsequence k)
 
 -- | For example,
---
 -- >>> equivalent (p → q) (no p ∨ q)
 -- True
 -- >>> equivalent (p) (no (no p))
@@ -272,7 +270,6 @@ equivalent :: FProp -> FProp -> Bool
 equivalent f g = isValid (f ↔ g)
 
 -- |For example,
---
 -- >>> equivalentKB (S.fromList [p → q,r ∨ q]) (S.fromList [no p ∨ q, q ∨ r])
 -- True
 -- >>> equivalentKB (S.fromList [p ∧ q]) (S.fromList [q,p])

@@ -61,18 +61,18 @@ window.onload = function () {pageLoad();};
 </code></strong>+++ OK, passed 100 tests.
 </pre></div></div><div class="top"><p class="src"><a id="v:prop_isConsequence" class="def">prop_isConsequence</a> :: <a href="Logic.html#t:KB">KB</a> -&gt; <a href="Logic.html#t:FProp">FProp</a> -&gt; <a href="../base-4.10.1.0/Data-Bool.html#t:Bool">Bool</a> <a href="src/Logic.html#prop_isConsequence" class="link">Source</a> <a href="#v:prop_isConsequence" class="selflink">#</a></p><div class="doc"><pre class="screen"><code class="prompt">&gt;&gt;&gt; </code><strong class="userinput"><code>quickCheck prop_isConsequence
 </code></strong>+++ OK, passed 100 tests.
-</pre></div></div><div class="top"><p class="src"><a id="v:isConsequenceKB" class="def">isConsequenceKB</a> :: <a href="Logic.html#t:KB">KB</a> -&gt; <a href="Logic.html#t:KB">KB</a> -&gt; <a href="../base-4.10.1.0/Data-Bool.html#t:Bool">Bool</a> <a href="src/Logic.html#isConsequenceKB" class="link">Source</a> <a href="#v:isConsequenceKB" class="selflink">#</a></p><div class="doc"><p>For example,</p><pre class="screen"><code class="prompt">&gt;&gt;&gt; </code><strong class="userinput"><code>isConsequenceKB (S.fromList [p &#8594; q, q &#8594; r]) (S.fromList [p &#8594; q, p &#8594; r])
-</code></strong>True
-<code class="prompt">&gt;&gt;&gt; </code><strong class="userinput"><code>isConsequenceKB (S.fromList [p]) (S.fromList [p &#8743; q])
-</code></strong>False
-</pre></div></div><div class="top"><p class="src"><a id="v:equivalent" class="def">equivalent</a> :: <a href="Logic.html#t:FProp">FProp</a> -&gt; <a href="Logic.html#t:FProp">FProp</a> -&gt; <a href="../base-4.10.1.0/Data-Bool.html#t:Bool">Bool</a> <a href="src/Logic.html#equivalent" class="link">Source</a> <a href="#v:equivalent" class="selflink">#</a></p><div class="doc"><p>For example,</p><pre class="screen"><code class="prompt">&gt;&gt;&gt; </code><strong class="userinput"><code>equivalent (p &#8594; q) (no p &#8744; q)
-</code></strong>True
-<code class="prompt">&gt;&gt;&gt; </code><strong class="userinput"><code>equivalent (p) (no (no p))
-</code></strong>True
-</pre></div></div><div class="top"><p class="src"><a id="v:equivalentKB" class="def">equivalentKB</a> :: <a href="Logic.html#t:KB">KB</a> -&gt; <a href="Logic.html#t:KB">KB</a> -&gt; <a href="../base-4.10.1.0/Data-Bool.html#t:Bool">Bool</a> <a href="src/Logic.html#equivalentKB" class="link">Source</a> <a href="#v:equivalentKB" class="selflink">#</a></p><div class="doc"><p>For example,</p><pre class="screen"><code class="prompt">&gt;&gt;&gt; </code><strong class="userinput"><code>equivalentKB (S.fromList [p &#8594; q,r &#8744; q]) (S.fromList [no p &#8744; q, q &#8744; r])
-</code></strong>True
-<code class="prompt">&gt;&gt;&gt; </code><strong class="userinput"><code>equivalentKB (S.fromList [p &#8743; q]) (S.fromList [q,p])
-</code></strong>True
-</pre></div></div><div class="top"><p class="src"><a id="v:prop_equivalent" class="def">prop_equivalent</a> :: <a href="Logic.html#t:FProp">FProp</a> -&gt; <a href="Logic.html#t:FProp">FProp</a> -&gt; <a href="../base-4.10.1.0/Data-Bool.html#t:Bool">Bool</a> <a href="src/Logic.html#prop_equivalent" class="link">Source</a> <a href="#v:prop_equivalent" class="selflink">#</a></p><div class="doc"><pre class="screen"><code class="prompt">&gt;&gt;&gt; </code><strong class="userinput"><code>quickCheck prop_equivalent
+</pre></div></div><div class="top"><p class="src"><a id="v:isConsequenceKB" class="def">isConsequenceKB</a> :: <a href="Logic.html#t:KB">KB</a> -&gt; <a href="Logic.html#t:KB">KB</a> -&gt; <a href="../base-4.10.1.0/Data-Bool.html#t:Bool">Bool</a> <a href="src/Logic.html#isConsequenceKB" class="link">Source</a> <a href="#v:isConsequenceKB" class="selflink">#</a></p><div class="doc"><p>For example,
+ &gt;&gt;&gt; isConsequenceKB (S.fromList [p &#8594; q, q &#8594; r]) (S.fromList [p &#8594; q, p &#8594; r])
+ True
+ &gt;&gt;&gt; isConsequenceKB (S.fromList [p]) (S.fromList [p &#8743; q])
+ False</p></div></div><div class="top"><p class="src"><a id="v:equivalent" class="def">equivalent</a> :: <a href="Logic.html#t:FProp">FProp</a> -&gt; <a href="Logic.html#t:FProp">FProp</a> -&gt; <a href="../base-4.10.1.0/Data-Bool.html#t:Bool">Bool</a> <a href="src/Logic.html#equivalent" class="link">Source</a> <a href="#v:equivalent" class="selflink">#</a></p><div class="doc"><p>For example,
+ &gt;&gt;&gt; equivalent (p &#8594; q) (no p &#8744; q)
+ True
+ &gt;&gt;&gt; equivalent (p) (no (no p))
+ True</p></div></div><div class="top"><p class="src"><a id="v:equivalentKB" class="def">equivalentKB</a> :: <a href="Logic.html#t:KB">KB</a> -&gt; <a href="Logic.html#t:KB">KB</a> -&gt; <a href="../base-4.10.1.0/Data-Bool.html#t:Bool">Bool</a> <a href="src/Logic.html#equivalentKB" class="link">Source</a> <a href="#v:equivalentKB" class="selflink">#</a></p><div class="doc"><p>For example,
+ &gt;&gt;&gt; equivalentKB (S.fromList [p &#8594; q,r &#8744; q]) (S.fromList [no p &#8744; q, q &#8744; r])
+ True
+ &gt;&gt;&gt; equivalentKB (S.fromList [p &#8743; q]) (S.fromList [q,p])
+ True</p></div></div><div class="top"><p class="src"><a id="v:prop_equivalent" class="def">prop_equivalent</a> :: <a href="Logic.html#t:FProp">FProp</a> -&gt; <a href="Logic.html#t:FProp">FProp</a> -&gt; <a href="../base-4.10.1.0/Data-Bool.html#t:Bool">Bool</a> <a href="src/Logic.html#prop_equivalent" class="link">Source</a> <a href="#v:prop_equivalent" class="selflink">#</a></p><div class="doc"><pre class="screen"><code class="prompt">&gt;&gt;&gt; </code><strong class="userinput"><code>quickCheck prop_equivalent
 </code></strong>+++ OK, passed 100 tests.
 </pre></div></div></div></div><div id="footer"><p>Produced by <a href="http://www.haskell.org/haddock/">Haddock</a> version 2.18.1</p></div></body></html>

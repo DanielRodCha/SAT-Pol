@@ -5,11 +5,11 @@ window.onload = function () {pageLoad();};
  variable v. It's important to note that deriv only works if it applies to
  polynomials without exponents greater than 1. In practice, deriv will only
  be used with the polynomials that have been previously embeded in the
- quotient group described above. For example,</p><pre class="screen"><code class="prompt">&gt;&gt;&gt; </code><strong class="userinput"><code>[x1,x2,x3,x4] = (map var [&quot;x1&quot;,&quot;x2&quot;,&quot;x3&quot;,&quot;x4&quot;]) :: [PolF2]
-</code></strong><code class="prompt">&gt;&gt;&gt; </code><strong class="userinput"><code>derivPol x1 x1
-</code></strong>1
-<code class="prompt">&gt;&gt;&gt; </code><strong class="userinput"><code>derivPol (1+x1+x2+x1*x2) x1
-</code></strong>x2+1
-<code class="prompt">&gt;&gt;&gt; </code><strong class="userinput"><code>derivPol (x1*x2+x1+x3*x4+1) x1
-</code></strong>x2+1
-</pre></div></div></div></div><div id="footer"><p>Produced by <a href="http://www.haskell.org/haddock/">Haddock</a> version 2.18.1</p></div></body></html>
+ quotient group described above. For example,
+ &gt;&gt;&gt; [x1,x2,x3,x4] = (map var [&quot;x1&quot;,&quot;x2&quot;,&quot;x3&quot;,&quot;x4&quot;]) :: [PolF2]
+ &gt;&gt;&gt; derivPol x1 x1
+ 1
+ &gt;&gt;&gt; derivPol (1+x1+x2+x1*x2) x1
+ x2+1
+ &gt;&gt;&gt; derivPol (x1*x2+x1+x3*x4+1) x1
+ x2+1</p></div></div></div></div><div id="footer"><p>Produced by <a href="http://www.haskell.org/haddock/">Haddock</a> version 2.18.1</p></div></body></html>

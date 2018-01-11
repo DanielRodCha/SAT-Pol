@@ -48,35 +48,20 @@ type Heuristics = Set PolF2 -> [PolF2] -> [PolF2]
 
 -- | (<b> monomialOrd ps vs </b>) is the list of variables which occurs in
 --   ps in the monomial order induced by the data type PolF2. For example:
---   
---   <pre>
---   &gt;&gt;&gt; [x1,x2] = map var ["x1","x2"] :: [PolF2]
---   
---   &gt;&gt;&gt; monomialOrd (S.fromList [x1,x2,x1+1]) [x1,x2]
---   [x1,x2]
---   </pre>
+--   &gt;&gt;&gt; [x1,x2] = map var ["x1","x2"] :: [PolF2] &gt;&gt;&gt;
+--   monomialOrd (S.fromList [x1,x2,x1+1]) [x1,x2] [x1,x2]
 monomialOrd :: Heuristics
 
 -- | (<b> frequency ps vs </b>) is the list of variables vs sorted by
---   frequency of occurrence in ps. For example:
---   
---   <pre>
---   &gt;&gt;&gt; [x1,x2] = map var ["x1","x2"] :: [PolF2]
---   
---   &gt;&gt;&gt; frequency (S.fromList [x1,x2,x1+1]) [x1,x2]
---   [x2,x1]
---   </pre>
+--   frequency of occurrence in ps. For example: &gt;&gt;&gt; [x1,x2] = map
+--   var ["x1","x2"] :: [PolF2] &gt;&gt;&gt; frequency (S.fromList
+--   [x1,x2,x1+1]) [x1,x2] [x2,x1]
 frequency :: Heuristics
 
 -- | (<b> revFreq ps vs </b>) is the list of variables vs ordered in
---   reverse order of frequency in ps. For example:
---   
---   <pre>
---   &gt;&gt;&gt; [x1,x2] = map var ["x1","x2"] :: [PolF2]
---   
---   &gt;&gt;&gt; revFreq (S.fromList [x1,x2,x1+1]) [x1,x2]
---   [x1,x2]
---   </pre>
+--   reverse order of frequency in ps. For example: &gt;&gt;&gt; [x1,x2] =
+--   map var ["x1","x2"] :: [PolF2] &gt;&gt;&gt; revFreq (S.fromList
+--   [x1,x2,x1+1]) [x1,x2] [x1,x2]
 revFreq :: Heuristics
 
 module Logic
@@ -274,37 +259,18 @@ prop_isValid :: FProp -> Bool
 --   </pre>
 prop_isConsequence :: KB -> FProp -> Bool
 
--- | For example,
---   
---   <pre>
---   &gt;&gt;&gt; isConsequenceKB (S.fromList [p → q, q → r]) (S.fromList [p → q, p → r])
---   True
---   
---   &gt;&gt;&gt; isConsequenceKB (S.fromList [p]) (S.fromList [p ∧ q])
---   False
---   </pre>
+-- | For example, &gt;&gt;&gt; isConsequenceKB (S.fromList [p → q, q → r])
+--   (S.fromList [p → q, p → r]) True &gt;&gt;&gt; isConsequenceKB
+--   (S.fromList [p]) (S.fromList [p ∧ q]) False
 isConsequenceKB :: KB -> KB -> Bool
 
--- | For example,
---   
---   <pre>
---   &gt;&gt;&gt; equivalent (p → q) (no p ∨ q)
---   True
---   
---   &gt;&gt;&gt; equivalent (p) (no (no p))
---   True
---   </pre>
+-- | For example, &gt;&gt;&gt; equivalent (p → q) (no p ∨ q) True
+--   &gt;&gt;&gt; equivalent (p) (no (no p)) True
 equivalent :: FProp -> FProp -> Bool
 
--- | For example,
---   
---   <pre>
---   &gt;&gt;&gt; equivalentKB (S.fromList [p → q,r ∨ q]) (S.fromList [no p ∨ q, q ∨ r])
---   True
---   
---   &gt;&gt;&gt; equivalentKB (S.fromList [p ∧ q]) (S.fromList [q,p])
---   True
---   </pre>
+-- | For example, &gt;&gt;&gt; equivalentKB (S.fromList [p → q,r ∨ q])
+--   (S.fromList [no p ∨ q, q ∨ r]) True &gt;&gt;&gt; equivalentKB
+--   (S.fromList [p ∧ q]) (S.fromList [q,p]) True
 equivalentKB :: KB -> KB -> Bool
 
 -- | <pre>
@@ -433,20 +399,10 @@ module Derivative
 --   works if it applies to polynomials without exponents greater than 1.
 --   In practice, deriv will only be used with the polynomials that have
 --   been previously embeded in the quotient group described above. For
---   example,
---   
---   <pre>
---   &gt;&gt;&gt; [x1,x2,x3,x4] = (map var ["x1","x2","x3","x4"]) :: [PolF2]
---   
---   &gt;&gt;&gt; derivPol x1 x1
---   1
---   
---   &gt;&gt;&gt; derivPol (1+x1+x2+x1*x2) x1
+--   example, &gt;&gt;&gt; [x1,x2,x3,x4] = (map var ["x1","x2","x3","x4"])
+--   :: [PolF2] &gt;&gt;&gt; derivPol x1 x1 1 &gt;&gt;&gt; derivPol
+--   (1+x1+x2+x1*x2) x1 x2+1 &gt;&gt;&gt; derivPol (x1*x2+x1+x3*x4+1) x1
 --   x2+1
---   
---   &gt;&gt;&gt; derivPol (x1*x2+x1+x3*x4+1) x1
---   x2+1
---   </pre>
 derivPol :: PolF2 -> PolF2 -> PolF2
 
 module Rule

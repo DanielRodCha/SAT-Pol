@@ -1,4 +1,7 @@
-module Heuristics where
+module Heuristics ( Heuristics
+                  , monomialOrd
+                  , frequency
+                  , revFreq ) where
 
 import Haskell4Maths (var
                      , vars)
@@ -15,7 +18,6 @@ type Heuristics = S.Set PolF2 -> [PolF2] -> [PolF2]
 -- | (__ monomialOrd ps vs __) is the list of variables which occurs
 -- in ps in the monomial order induced by the data type PolF2. For
 -- example:
---
 -- >>> [x1,x2] = map var ["x1","x2"] :: [PolF2]
 -- >>> monomialOrd (S.fromList [x1,x2,x1+1]) [x1,x2]
 -- [x1,x2]
@@ -24,7 +26,6 @@ monomialOrd ps vs = vs
 
 -- | (__ frequency ps vs __) is the list of variables vs sorted by
 -- frequency of occurrence in ps. For example:
---
 -- >>> [x1,x2] = map var ["x1","x2"] :: [PolF2]
 -- >>> frequency (S.fromList [x1,x2,x1+1]) [x1,x2]
 -- [x2,x1]
@@ -36,7 +37,6 @@ frequency ps vs = sortOn frequency vs
 
 -- | (__ revFreq ps vs __) is the list of variables vs ordered in
 -- reverse order of frequency in ps. For example:
---
 -- >>> [x1,x2] = map var ["x1","x2"] :: [PolF2]
 -- >>> revFreq (S.fromList [x1,x2,x1+1]) [x1,x2]
 -- [x1,x2]
