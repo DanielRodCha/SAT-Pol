@@ -94,4 +94,86 @@ proyecto escribiendo en el terminal:
 stack build
 #+END_SRC
 
-Por último, 
+Por último, se recomienda al usuario que cargue el módulo
+src/MainFunctions,  ya que en él figuran las funciones más importantes
+de la librería. Para ello, escriba en la terminal:
+
+#+BEGIN_SRC
+SAT-Pol danrodcha$ stack ghci
+SAT-Pol-0.1.0.0: initial-build-steps (lib + exe)
+Configuring GHCi with the following packages: SAT-Pol
+
+* * * * * * * *
+The main module to load is ambiguous. Candidates are: 
+1. Package `SAT-Pol' component exe:sat with main-is file: /Users/danrodcha/SAT-Pol/app2/Main.hs
+2. Package `SAT-Pol' component exe:satCNF with main-is file: /Users/danrodcha/SAT-Pol/app/Main.hs
+You can specify which one to pick by: 
+ * Specifying targets to stack ghci e.g. stack ghci SAT-Pol:exe:sat
+ * Specifying what the main is e.g. stack ghci --main-is SAT-Pol:exe:sat
+ * Choosing from the candidate above [1..2]
+* * * * * * * *
+
+Specify main module to use (press enter to load none): 
+#+END_SRC
+
+Pulse Enter:
+
+#+BEGIN_SRC
+Not loading any main modules, as no valid module selected
+
+GHCi, version 8.2.2: http://www.haskell.org/ghc/  :? for help
+[ 1 of 13] Compiling Haskell4Maths    ( /Users/danrodcha/SAT-Pol/src/Haskell4Maths.hs, interpreted )
+[ 2 of 13] Compiling F2               ( /Users/danrodcha/SAT-Pol/src/F2.hs, interpreted )
+[ 3 of 13] Compiling Heuristics       ( /Users/danrodcha/SAT-Pol/src/Heuristics.hs, interpreted )
+[ 4 of 13] Compiling Logic            ( /Users/danrodcha/SAT-Pol/src/Logic.hs, interpreted )
+[ 5 of 13] Compiling Analizador       ( /Users/danrodcha/SAT-Pol/src/Analizador.hs, interpreted )
+[ 6 of 13] Compiling Subsumption      ( /Users/danrodcha/SAT-Pol/src/Subsumption.hs, interpreted )
+[ 7 of 13] Compiling Transformations  ( /Users/danrodcha/SAT-Pol/src/Transformations.hs, interpreted )
+[ 8 of 13] Compiling Preprocessing    ( /Users/danrodcha/SAT-Pol/src/Preprocessing.hs, interpreted )
+[ 9 of 13] Compiling LogicParser      ( /Users/danrodcha/SAT-Pol/src/LogicParser.hs, interpreted )
+[10 of 13] Compiling Derivative       ( /Users/danrodcha/SAT-Pol/src/Derivative.hs, interpreted )
+[11 of 13] Compiling Rule             ( /Users/danrodcha/SAT-Pol/src/Rule.hs, interpreted )
+[12 of 13] Compiling Saturation       ( /Users/danrodcha/SAT-Pol/src/Saturation.hs, interpreted )
+[13 of 13] Compiling MainFunctions    ( /Users/danrodcha/SAT-Pol/src/MainFunctions.hs, interpreted )
+Ok, 13 modules loaded.
+Loaded GHCi configuration from /private/var/folders/k5/5wbfgm4d5cbbbgm0c9hqk94m0000gn/T/ghci12315/ghci-script
+*Transformations Analizador Derivative F2 Haskell4Maths Heuristics Logic LogicParser MainFunctions Preprocessing Rule Saturation Subsumption Transformations> 
+#+END_SRC
+
+Cargue el módulo MainFunctions:
+
+#+BEGIN_SRC
+*Transformations Analizador Derivative F2 Haskell4Maths Heuristics Logic LogicParser MainFunctions Preprocessing Rule Saturation Subsumption Transformations> :l MainFunctions 
+[ 1 of 12] Compiling Haskell4Maths    ( /Users/danrodcha/SAT-Pol/src/Haskell4Maths.hs, interpreted )
+[ 2 of 12] Compiling F2               ( /Users/danrodcha/SAT-Pol/src/F2.hs, interpreted )
+[ 3 of 12] Compiling Heuristics       ( /Users/danrodcha/SAT-Pol/src/Heuristics.hs, interpreted )
+[ 4 of 12] Compiling Logic            ( /Users/danrodcha/SAT-Pol/src/Logic.hs, interpreted )
+[ 5 of 12] Compiling Analizador       ( /Users/danrodcha/SAT-Pol/src/Analizador.hs, interpreted )
+[ 6 of 12] Compiling Subsumption      ( /Users/danrodcha/SAT-Pol/src/Subsumption.hs, interpreted )
+[ 7 of 12] Compiling Transformations  ( /Users/danrodcha/SAT-Pol/src/Transformations.hs, interpreted )
+[ 8 of 12] Compiling Preprocessing    ( /Users/danrodcha/SAT-Pol/src/Preprocessing.hs, interpreted )
+[ 9 of 12] Compiling Derivative       ( /Users/danrodcha/SAT-Pol/src/Derivative.hs, interpreted )
+[10 of 12] Compiling Rule             ( /Users/danrodcha/SAT-Pol/src/Rule.hs, interpreted )
+[11 of 12] Compiling Saturation       ( /Users/danrodcha/SAT-Pol/src/Saturation.hs, interpreted )
+[12 of 12] Compiling MainFunctions    ( /Users/danrodcha/SAT-Pol/src/MainFunctions.hs, interpreted )
+Ok, 12 modules loaded.
+*MainFunctions> 
+#+END_SRC
+
+Veamos las principales tareas que puede resolver esta librería:
+
+*** Olvidar una variable:
+Para ello basta con usar la función forgetVarKB:
+
+#+BEGIN_SRC haskell
+-- >>> x1 = (var "x1") :: PolF2
+-- >>> x2 = (var "x2") :: PolF2
+-- >>> forgetVarKB x2 (S.fromList [x2,x1*x2,x1+1])
+-- fromList [x1,x1+1,1]
+-- >>> forgetVarKB x1 (S.fromList [x1,x1+1,1])
+-- fromList [0]
+#+END_SRC
+
+*** Olvidar una lista determinada de variables
+**** De forma eficiente
+**** Con un orden predeterminado

@@ -16,4 +16,3 @@ import Saturation    ( forgetVarKB
                      , saturateKB)
 import System.Environment
 import qualified Data.Set as S
-
