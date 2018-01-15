@@ -10,4 +10,5 @@ isDivisibleBy _ 0 = False --bug
 x `isDivisibleBy` y = x %% [y] == 0
 
 removeDivisors :: PolF2 -> S.Set PolF2 -> S.Set PolF2
-removeDivisors x = S.filter (\y -> not (x `isDivisibleBy` y))
+removeDivisors _ b = b
+--removeDivisors x = S.filter (\y -> not (x `isDivisibleBy` y))

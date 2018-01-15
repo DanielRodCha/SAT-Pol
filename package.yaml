@@ -17,6 +17,7 @@ dependencies:
 - criterion
 - hspec
 - QuickCheck
+- parsec
 library:
   source-dirs: src
   exposed-modules:
@@ -30,8 +31,15 @@ library:
   - Saturation
   - Transformations
   - Subsumption
+  - LogicParser
 executables:
-  sat0:
+  sat:
+   main: Main.hs
+   source-dirs:
+   - app2
+   - src
+   - exFORMULAS
+  satCNF:
     main: Main.hs
     source-dirs:
     - app

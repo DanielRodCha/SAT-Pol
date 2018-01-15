@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 024afd199e1deffa1c0f07a6ed27f6fe7c8e29a8c87d93bb0297983c85a0abf3
+-- hash: ca124d00077a104ed7220ac776e8ead49eca625fe2650899bff86bf78508bd7a
 
 name:           SAT-Pol
 version:        0.1.0.0
@@ -31,6 +31,7 @@ library
     , doctest
     , hatt
     , hspec
+    , parsec
   exposed-modules:
       Derivative
       F2
@@ -42,11 +43,45 @@ library
       Saturation
       Transformations
       Subsumption
+      LogicParser
   other-modules:
+      Analizador
       Paths_SAT_Pol
   default-language: Haskell2010
 
-executable sat0
+executable sat
+  main-is: Main.hs
+  hs-source-dirs:
+      app2
+      src
+      exFORMULAS
+  build-depends:
+      HaskellForMaths
+    , QuickCheck
+    , base >=4.7 && <5
+    , containers
+    , criterion
+    , doctest
+    , hatt
+    , hspec
+    , parsec
+  other-modules:
+      Analizador
+      Derivative
+      F2
+      Haskell4Maths
+      Heuristics
+      Logic
+      LogicParser
+      Preprocessing
+      Rule
+      Saturation
+      Subsumption
+      Transformations
+      Paths_SAT_Pol
+  default-language: Haskell2010
+
+executable satCNF
   main-is: Main.hs
   hs-source-dirs:
       app
@@ -61,12 +96,15 @@ executable sat0
     , doctest
     , hatt
     , hspec
+    , parsec
   other-modules:
+      Analizador
       Derivative
       F2
       Haskell4Maths
       Heuristics
       Logic
+      LogicParser
       Preprocessing
       Rule
       Saturation
@@ -92,12 +130,15 @@ test-suite doctests
     , doctest-discover
     , hatt
     , hspec
+    , parsec
   other-modules:
+      Analizador
       Derivative
       F2
       Haskell4Maths
       Heuristics
       Logic
+      LogicParser
       Preprocessing
       Rule
       Saturation
@@ -121,16 +162,19 @@ test-suite spec
     , doctest
     , hatt
     , hspec
+    , parsec
   other-modules:
       DerivativeSpec
       F2Spec
       RuleSpec
       TransformationsSpec
+      Analizador
       Derivative
       F2
       Haskell4Maths
       Heuristics
       Logic
+      LogicParser
       Preprocessing
       Rule
       Saturation
@@ -155,12 +199,15 @@ benchmark bench-innit
     , doctest
     , hatt
     , hspec
+    , parsec
   other-modules:
+      Analizador
       Derivative
       F2
       Haskell4Maths
       Heuristics
       Logic
+      LogicParser
       Preprocessing
       Rule
       Saturation

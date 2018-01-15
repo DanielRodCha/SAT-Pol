@@ -17,7 +17,6 @@ main = do
  f' <- dimacs2Pols f
  let sol = saturateKB f' h
  print sol
- return sol
 
 
 -- aux :: Heuristics -> String

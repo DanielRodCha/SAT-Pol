@@ -20,6 +20,7 @@ import Test.QuickCheck (quickCheck)
 --
 -- $ It's important to note that only works if it applies to monomials without exponents greater than 1.
 -- For example,
+--
 -- >>> x1 = var "x1" :: PolF2
 -- >>> exampleMonomial1 = (Lex (M 1 []))
 -- >>> exampleMonomial1
@@ -49,6 +50,7 @@ derivMon m v
 -- polynomials without exponents greater than 1. In practice, deriv will only
 -- be used with the polynomials that have been previously embeded in the
 -- quotient group described above. For example,
+--
 -- >>> [x1,x2,x3,x4] = (map var ["x1","x2","x3","x4"]) :: [PolF2]
 -- >>> derivPol x1 x1
 -- 1
@@ -56,6 +58,5 @@ derivMon m v
 -- x2+1
 -- >>> derivPol (x1*x2+x1+x3*x4+1) x1
 -- x2+1
-
 derivPol :: PolF2 -> PolF2 -> PolF2
 derivPol p v = linear (`derivMon` v) p

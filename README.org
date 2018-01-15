@@ -62,3 +62,29 @@ True
 False
 (1.05 secs, 1,060,011,048 bytes)
 #+END_SRC
+
+** Tutorial (Spanish)
+Aquí se describen las pautas a seguir para poder usar la librería,
+suponiendo que el lector no tiene instalados ninguno de los programas
+necesarios.
+
+**** Git
+En primer lugar será necesario [[https://git-scm.com/book/en/v2/Getting-Started-Installing-Git][git]], que como usuarios de GitHub
+debería estar instalado. En caso contrario, siga las instrucciones del
+enlace anterior.
+
+Una vez instalado git, vaya a la terminal de comandos y escriba:
+
+#+BEGIN_SRC
+git clone https://github.com/DanielRodCha/SAT-Pol.git
+#+END_SRC
+
+**** Stack
+La librería está escrita en lenguaje Haskell, así que se será
+necesario instalar la herramienta [[https://docs.haskellstack.org/en/stable/README/][stack]]. Dicha herramienta será muy
+útil ya que construirá todo el proyecto, además de descargar las
+librerías auxiliares.
+
+**** 
+
+- 

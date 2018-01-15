@@ -6,31 +6,32 @@ import Haskell4Maths (var
 import F2 (PolF2)
 import Rule (independenceRule)
 import Heuristics
-import Subsumption
+--import Subsumption
 
 import System.Environment
 import qualified Data.Set as S
 
--- | __(independenceRuleAux v p ps acum)__ is the union of the set /accum/, which
--- ramains invariant, and the set of polynomials obtained after applying
--- independenceRule respect /v/ between polynomial /p/ and every polynomial from set
--- /pps/, including itself. However, to improve efficiency the process is
--- terminated if a zero occurs. This is because a zero in the polynomial
--- set is sufficient for the tool to return False. For example,
-
+-- | __(independenceRuleAux v p ps acum)__ is the union of the set
+-- /accum/, which ramains invariant, and the set of polynomials
+-- obtained after applying independenceRule with respect to /v/
+-- between polynomial /p/ and every polynomial from set /pps/,
+-- including itself. However, to improve efficiency the process is
+-- terminated if a zero occurs. This is because a zero in the
+-- polynomial set is sufficient for the tool to return False.
 independenceRuleAux :: PolF2 -> PolF2 -> S.Set PolF2 ->
                             S.Set PolF2 -> S.Set PolF2
 independenceRuleAux v p ps acum
   | S.null ps = acum
   | dR == 0   = S.fromList [0]
-  | otherwise = independenceRuleAux v p ps' (S.insert dR acum')
+  | otherwise = independenceRuleAux v p ps' (S.insert dR acum)
                 where (p',ps') = S.deleteFindMin ps
                       dR       = independenceRule v p p'
-                      acum'    = removeDivisors dR acum
+--                      acum'    = removeDivisors dR acum
 
--- | __(independenceRuleKB v pps acum)__ is the union of the set /accum/, which
--- ramains invariant, and the set of polynomials obtained after applying
--- deltaRule respect /v/ between every polynomial from set /pps/. For example,
+-- | __(independenceRuleKB v pps acum)__ is the union of the set
+-- /accum/, which ramains invariant, and the set of polynomials
+-- obtained after applying deltaRule with respect to /v/ between every
+-- polynomial from set /pps/. For example,
 --
 -- >>> [x1,x2,x3] = (map var ["x1","x2","x3"]) :: [PolF2]
 -- >>> independenceRuleKB x1 (S.fromList [x1]) (S.fromList [1]) 
@@ -46,14 +47,16 @@ independenceRuleKB v pps acum
                    (independenceRuleAux v p pps acum)
       where (p,ps) = S.deleteFindMin pps
 
--- | For example,
+
+-- | __(forgetVarKB v ps)__ is the set of polynomials obtained after
+-- applying to /ps/ the independence rule with respect to /v/.
+-- For example,
 -- >>> x1 = (var "x1") :: PolF2
 -- >>> x2 = (var "x2") :: PolF2
 -- >>> forgetVarKB x2 (S.fromList [x2,x1*x2,x1+1])
 -- fromList [x1,x1+1,1]
 -- >>> forgetVarKB x1 (S.fromList [x1,x1+1,1])
 -- fromList [0]
-
 forgetVarKB :: PolF2 -> S.Set PolF2 -> S.Set PolF2
 forgetVarKB v ps = independenceRuleKB v ps1 ps2
        where (ps1,ps2) = S.partition (\p -> elem v (vars p)) ps
@@ -65,10 +68,10 @@ forgetVarKB v ps = independenceRuleKB v ps1 ps2
 -- >>> x1 = (var "x1") :: PolF2
 -- >>> saturateKB (S.fromList[x1,x1+1],[x1]) monomialOrd
 -- False
-
 saturateKB :: (S.Set PolF2,[PolF2]) -> Heuristics -> Bool
 saturateKB (ps,[])   h                 = S.notMember 0 ps
 saturateKB (ps,v:vs) h | S.member 0 ps = False
-                       | otherwise     = saturateKB (aux, h aux vs) h
+                       | otherwise     = do
+                       saturateKB (aux, h aux vs) h
                          where aux     = forgetVarKB v ps
 

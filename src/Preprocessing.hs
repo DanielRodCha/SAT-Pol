@@ -2,12 +2,16 @@ module Preprocessing where
 
 
 import Haskell4Maths (var
-                     , zerov)
+                     , zerov
+                     , vars)
 import F2
-import Transformations ( phi)
+import Transformations ( phi, proyection)
 import Subsumption
+--import LogicParser
+import Analizador (parseFProp)
 
 import Data.List (foldl')
+import Data.Char
 import qualified Data.Set as S
 
 -- | (__ literal2Pol l __)is the pair /(p,v)/, where /p/ is the polynomial and /v/ is
@@ -20,7 +24,6 @@ import qualified Data.Set as S
 -- (x1,x1)
 -- >>> literal2Pol "-1"
 -- (x1+1,x1)
-
 literal2Pol :: String -> (PolF2,PolF2)
 literal2Pol "0"       = (zerov,zerov)
 literal2Pol ('-':lit) = (1 + x,x)
@@ -36,7 +39,6 @@ literal2Pol lit       = (x,x)
 -- (x1,fromList [x1])
 -- >>> clause2Pol ["1","-2"]
 -- (x1x2+x2+1,fromList [x1,x2])
-
 clause2Pol :: [String] -> (PolF2, S.Set (PolF2))
 clause2Pol (c:cs) | c == "c" || c == "p" = (1, S.empty)
 clause2Pol cs = aux $ foldl' (\acc x -> disj (literal2Pol x) acc)
@@ -59,4 +61,19 @@ dimacs2Pols f = do
     aux1 $ (foldr (\x acc -> (aux2 ((clause2Pol . words) x) acc))
              (S.empty,S.empty)) $ lines $ s0
      where aux1 (a,b) = (a,S.toList b)
-           aux2 (a,b) (acc',vs) = (S.insert a (removeDivisors a acc'), S.union vs b)
+           aux2 (a,b) (acc',vs) = (S.insert a acc, S.union vs b)
+--           aux2 (a,b) (acc',vs) = (S.insert a (removeDivisors a acc'), S.union vs b)
+
+-- | __(formulas2Pols f)__ is the pair (/ps/,/vs/) where ps is the set of polynomials
+-- wich corresponds to the formula in FORMULAS format writed in the file /f/ and
+-- /vs/ is the list of variables wich occurs in any polynomial. For example,
+formulas2Pols f = do
+  s0 <- readFile f
+  return $
+    aux1 $ (foldr (\x acc -> (aux2 (aux3 x) acc))
+             (S.empty,S.empty)) $ lines $ s0
+     where aux1 (a,b) = (a,S.toList b)
+           aux2 (a,b) (acc',vs) = (S.insert a acc, S.union vs b)
+--           aux2 (a,b) (acc',vs) = (S.insert a (removeDivisors a acc'), S.union vs b)
+           aux3 = aux4 . proyection . parseFProp
+           aux4 x = (x,S.fromList (vars x))

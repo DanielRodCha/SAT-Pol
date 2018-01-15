@@ -31,7 +31,6 @@ import qualified Data.Set as S
 -- x2x3
 -- >>> independenceRule x1 (1+x1*x3) (x1*x2)
 -- x2x3+x2
-
 independenceRule :: PolF2 -> PolF2 -> PolF2 -> PolF2
 independenceRule x a1 a2 = aux + a1a2 + aux2
   where da1       = derivPol a1 x

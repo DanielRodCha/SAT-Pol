@@ -22,7 +22,6 @@ spec = do
     context "Derivative properties:" (do
       it "Derivative of the derivative" $ property prop_deriv_deriv
       it "Addition" $ property prop_deriv_sum
-      it "Product" $ property prop_deriv_prod
       it "Semantic equivalence of derivative" $ property prop_deriv
       )
 
@@ -36,10 +35,6 @@ prop_deriv_deriv p v = derivPol (derivPol p x) x == 0
 
 prop_deriv_sum :: PolF2 -> PolF2 -> VarF2 -> Bool
 prop_deriv_sum p q v = derivPol (p+q) x == (derivPol p x) + (derivPol q x)
-                       where x = unbox v
-
-prop_deriv_prod :: PolF2 -> PolF2 -> VarF2 -> Bool
-prop_deriv_prod p q v = derivPol (p*q) x == (derivPol p x)*q + p*(derivPol q x)
                        where x = unbox v
 
 
