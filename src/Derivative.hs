@@ -9,7 +9,7 @@ import Haskell4Maths ( lm
                      , Lex (..)
                      , MonImpl(..))
 import F2 (PolF2)
-import Transformations (proyection
+import Transformations (projection
                         , theta)
        
 import Data.List (union)

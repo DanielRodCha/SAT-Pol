@@ -6,7 +6,7 @@ import Haskell4Maths ( var
 import F2 (PolF2)
 import Transformations ( phi
                         , theta
-                        , proyection)
+                        , projection)
 import Derivative (derivPol)
 
 import Data.List (union)
@@ -46,6 +46,6 @@ independenceRule x a1 a2 = aux + a1a2 + aux2
 -- propositional formulas.
 independenceRuleForm :: VarProp -> FProp -> FProp -> FProp
 independenceRuleForm p f1 f2 = theta $ independenceRule x p1 p2
-  where x  = proyection (Atom p)
-        p1 = proyection f1
-        p2 = proyection f2
+  where x  = projection (Atom p)
+        p1 = projection f1
+        p2 = projection f2

@@ -69,11 +69,11 @@ suponiendo que el lector no tiene instalados ninguno de los programas
 necesarios.
 
 **** Git
-En primer lugar será necesario [[https://git-scm.com/book/en/v2/Getting-Started-Installing-Git][git]], que como usuarios de GitHub
-debería estar instalado. En caso contrario, siga las instrucciones del
-enlace anterior.
+En primer lugar será necesario [[https://git-scm.com/book/en/v2/Getting-Started-Installing-Git][git]] . En caso de no estar instalado
+siga las instrucciones del enlace anterior.
 
-Una vez instalado git, vaya a la terminal de comandos y escriba:
+Una vez instalado git correctamente, vaya a la terminal de comandos y
+escriba:
 
 #+BEGIN_SRC
 git clone https://github.com/DanielRodCha/SAT-Pol.git
@@ -85,6 +85,13 @@ necesario instalar la herramienta [[https://docs.haskellstack.org/en/stable/READ
 útil ya que construirá todo el proyecto, además de descargar las
 librerías auxiliares.
 
-**** 
+Tras haber completado la instalación de la herramienta stack, navegue
+por los ficheros desde el terminal hasta encontrarse en la carpeta
+SAT-Pol, que se creó en el paso anterior. A continuación, contruya el
+proyecto escribiendo en el terminal:
 
-- 
+#+BEGIN_SRC
+stack build
+#+END_SRC
+
+Por último, 

@@ -5,7 +5,7 @@ import Haskell4Maths (var
                      , zerov
                      , vars)
 import F2
-import Transformations ( phi, proyection)
+import Transformations ( phi, projection)
 import Subsumption
 --import LogicParser
 import Analizador (parseFProp)
@@ -61,7 +61,7 @@ dimacs2Pols f = do
     aux1 $ (foldr (\x acc -> (aux2 ((clause2Pol . words) x) acc))
              (S.empty,S.empty)) $ lines $ s0
      where aux1 (a,b) = (a,S.toList b)
-           aux2 (a,b) (acc',vs) = (S.insert a acc, S.union vs b)
+           aux2 (a,b) (acc,vs) = (S.insert a acc, S.union vs b)
 --           aux2 (a,b) (acc',vs) = (S.insert a (removeDivisors a acc'), S.union vs b)
 
 -- | __(formulas2Pols f)__ is the pair (/ps/,/vs/) where ps is the set of polynomials
@@ -73,7 +73,7 @@ formulas2Pols f = do
     aux1 $ (foldr (\x acc -> (aux2 (aux3 x) acc))
              (S.empty,S.empty)) $ lines $ s0
      where aux1 (a,b) = (a,S.toList b)
-           aux2 (a,b) (acc',vs) = (S.insert a acc, S.union vs b)
+           aux2 (a,b) (acc,vs) = (S.insert a acc, S.union vs b)
 --           aux2 (a,b) (acc',vs) = (S.insert a (removeDivisors a acc'), S.union vs b)
-           aux3 = aux4 . proyection . parseFProp
+           aux3 = aux4 . projection . parseFProp
            aux4 x = (x,S.fromList (vars x))

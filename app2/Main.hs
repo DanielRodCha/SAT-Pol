@@ -1,6 +1,6 @@
 module Main where
 
-import Preprocessing (formulas2pols)
+import Preprocessing (formulas2Pols)
 import Saturation (saturateKB)
 import Heuristics
 

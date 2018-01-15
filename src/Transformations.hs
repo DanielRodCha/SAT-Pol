@@ -2,7 +2,7 @@ module Transformations
     ( tr
     , phi
     , theta
-    , proyection
+    , projection
     , ideal) where
 
 import Logic
@@ -91,12 +91,12 @@ ideal p = [v+v^2| v<-vars p]
 
 -- | For example,
 -- >>> [p1,p2] = [Atom "p1",Atom "p2"]
--- >>> proyection p1
+-- >>> projection p1
 -- x1
 -- >>> tr (p1 → p1 ∧ p2)
 -- x1^2x2+x1+1
--- >>> proyection (p1 → p1 ∧ p2)
+-- >>> projection (p1 → p1 ∧ p2)
 -- x1x2+x1+1
-proyection :: FProp -> PolF2
-proyection = phi . tr
+projection :: FProp -> PolF2
+projection = phi . tr
 
