@@ -40,7 +40,7 @@ stack build
 #+END_SRC
 
 *** MainFunctions
-
+**** Cargar el módulo MainFunctions
 Por último, se recomienda al usuario que cargue el módulo
 src/MainFunctions,  ya que en él figuran las funciones más importantes
 de la librería. Para ello, escriba en la terminal:
@@ -105,8 +105,28 @@ Ok, 12 modules loaded.
 *MainFunctions> 
 #+END_SRC
 
-Veamos las principales tareas que puede resolver esta librería:
+**** Consideraciones previas
+Como una base de conocimiento es un conjunto de reglas, las listas de
+reglas se sumergirán en el tipo de dato Set (conjunto). Esto nos
+permite trabajar con bases de conocimiento sin elementos repetidos, es
+decir sin redundancias. Para hacer esta inmersión manualmente se puede
+usar la función fromList:
+#+BEGIN_SRC
+*MainFunctions> S.fromList []
+fromList []
+*MainFunctions> S.fromList [1,2,3,1,2]
+fromList [1,2,3]
+*MainFunctions> [x1,x2,x3,x4] = map var ["x1","x2","x3","x4"] :: [PolF2]
+*MainFunctions> S.fromList [x1,x2,x1+1,x1]
+fromList [x1,x1+1,x2]
+#+END_SRC
 
+Tal y como se ve en el ejemplo anterior, si queremos definir nuestros
+propios polinomios se deben declarar las variables
+previamente. Posteriormente se verá que esto no es necesario si
+importamos una base de conocimiento desde un archivo de texto.
+
+A continuación se exponen las principales tareas que puede resolver esta librería:
 **** Olvidar una variable mediante la regla de independencia:
 Para ello basta con usar la función forgetVarKB:
 
@@ -189,8 +209,31 @@ The satisfactibility of instance exFORMULAS/easy/example1.txt solved by frequenc
 False
 #+END_SRC
 
-#+BEGIN_SRC
+**** Resolver una instancia SAT desde la terminal de comandos
+La herramienta stack incluye la posibilidad de crear accesos directos
+a ciertas funciones. Aprovechando esto se han definido dos distintos
+en función del fichero de entrada. Si el conjunto de fórmulas está en
+formato DIMACS el ejecutable que se debe usar se llama satCNF mientras
+que el fichero debe estar especificado en el módulo app/Main.hs
+(modificando la variable f, de forma similar al caso anterior):
 
+#+BEGIN_SRC
+MacBook-Air-de-Daniel:SAT-Pol danrodcha$ stack build
+MacBook-Air-de-Daniel:SAT-Pol danrodcha$ stack exec satCNF
+The satisfactibility of instance exDIMACS/medium/exampleSat2.txt solved by frequency heuristics is:
+True
+#+END_SRC
+
+Si el conjunto de fórmulas sigue la sintaxis de Prove9, el ejecutable
+que se debe usar se llama sat mientras que el fichero debe estar
+especificado en el módulo app2/Main.hs (modificando la variable f, de
+forma similar al caso anterior).
+
+#+BEGIN_SRC
+MacBook-Air-de-Daniel:SAT-Pol danrodcha$ stack build
+MacBook-Air-de-Daniel:SAT-Pol danrodcha$ stack exec sat
+The satisfactibility of instance exFORMULAS/easy/example1.txt solved by frequency heuristics is:
+False
 #+END_SRC
 
 ** exDIMACS study

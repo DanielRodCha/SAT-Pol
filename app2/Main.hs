@@ -1,6 +1,6 @@
 module Main where
 
-import Preprocessing (formulas2Pols)
+import Preprocessing (dimacs2Pols)
 import Saturation (saturateKB)
 import Heuristics
 
@@ -10,11 +10,11 @@ import System.Environment
 -- file /f/ were satisfiable. Otherwise, /(main f)/ would return False.
 
 main = do
- let f = "exDIMACS/medium/exampleSat3.txt"
+ let f = "exDIMACS/medium/exampleSat2.txt"
  let h = frequency
  putStrLn ("The satisfactibility of instance " ++ f ++
            " solved by frequency heuristics is:")
- f' <- formulas2Pols f
+ f' <- dimacs2Pols f
  let sol = saturateKB f' h
  print sol
  return sol

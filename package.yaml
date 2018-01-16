@@ -31,18 +31,18 @@ library:
   - Saturation
   - Transformations
   - Subsumption
-  - LogicParser
+  - Analizador
 executables:
   sat:
    main: Main.hs
    source-dirs:
-   - app2
+   - app
    - src
    - exFORMULAS
   satCNF:
     main: Main.hs
     source-dirs:
-    - app
+    - app2
     - src
     - exDIMACS
 tests:
