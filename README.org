@@ -8,7 +8,7 @@ rule (or delta rule). There is further information obout the algorithm in this
 
 The documentation about the modules it's hosted [[https://danielrodcha.github.io/SAT-Pol/][here]].
 
-** Tutorial (Spanish)
+** User guide (Spanish)
 Aquí se describen las pautas a seguir para poder usar la librería,
 suponiendo que el lector no tiene instalados ninguno de los programas
 necesarios.
@@ -111,7 +111,8 @@ reglas se sumergirán en el tipo de dato Set (conjunto). Esto nos
 permite trabajar con bases de conocimiento sin elementos repetidos, es
 decir sin redundancias. Para hacer esta inmersión manualmente se puede
 usar la función fromList:
-#+BEGIN_SRC
+
+#+BEGIN_SRC haskell
 *MainFunctions> S.fromList []
 fromList []
 *MainFunctions> S.fromList [1,2,3,1,2]
