@@ -187,16 +187,13 @@ funciones que sirven para interactuar son:
 #+BEGIN_SRC
 *MainFunctions> dimacs2Pols "exDIMACS/easy/example1.txt"
 (fromList [x1x2+x1+x2,1],[x1,x2])
-*MainFunctions> satCNF
+*MainFunctions> satCNF "exDIMACS/easy/example1.txt" "frequency"
 The satisfactibility of instance exDIMACS/easy/example1.txt solved by frequency heuristics is:
 True
 #+END_SRC
 
-Si se quiere modificar el archivo a saturar basta con modificar
-MainFunctions.hs , construir el proyecto de nuevo con stack build, y
-cargar el módulo de nuevo (:reload). Por comodidad, se recomienda abrir dos terminales;
-en una se construye el módulo con stack, mientras que en la otra se
-trabaja con ghci.
+Se debe tener en cuenta que se especifica el nombre de la heurística
+que se quiere utilizar mediante una cadena de caracteres.
 
 Por otro lado, si el archivo contiene la base de conocimiento según la
 sintaxis de Prover9 (teniendo en cuenta que sólo trabaja con lógica
@@ -205,7 +202,7 @@ proposicional), las funciones son:
 #+BEGIN_SRC
 *MainFunctions> formulas2Pols "exFORMULAS/easy/example1.txt"
 (fromList [x1x2+x1+x2,x1x3,x1x3+x3+1,x1x4+x4],[x1,x2,x3,x4])
-*MainFunctions> satFORMULAS
+*MainFunctions> satFORMULAS "exFORMULAS/easy/example1.txt" "frequency"
 The satisfactibility of instance exFORMULAS/easy/example1.txt solved by frequency heuristics is:
 False
 #+END_SRC
@@ -214,25 +211,23 @@ False
 La herramienta stack incluye la posibilidad de crear accesos directos
 a ciertas funciones. Aprovechando esto se han definido dos distintos
 en función del fichero de entrada. Si el conjunto de fórmulas está en
-formato DIMACS el ejecutable que se debe usar se llama satCNF mientras
-que el fichero debe estar especificado en el módulo app/Main.hs
-(modificando la variable f, de forma similar al caso anterior):
+formato DIMACS el ejecutable que se debe usar se llama satCNF, seguido
+del fichero que se quiere usar, así como de la heurística escogida:
 
 #+BEGIN_SRC
 MacBook-Air-de-Daniel:SAT-Pol danrodcha$ stack build
-MacBook-Air-de-Daniel:SAT-Pol danrodcha$ stack exec satCNF
+MacBook-Air-de-Daniel:SAT-Pol danrodcha$ stack exec satCNF exDIMACS/medium/exampleSat2.txt frequency
 The satisfactibility of instance exDIMACS/medium/exampleSat2.txt solved by frequency heuristics is:
 True
 #+END_SRC
 
 Si el conjunto de fórmulas sigue la sintaxis de Prove9, el ejecutable
-que se debe usar se llama sat mientras que el fichero debe estar
-especificado en el módulo app2/Main.hs (modificando la variable f, de
-forma similar al caso anterior).
+que se debe usar se llama sat, y debe ir seguido del fichero que se
+quiere usar, así como de la heurística escogida:
 
 #+BEGIN_SRC
 MacBook-Air-de-Daniel:SAT-Pol danrodcha$ stack build
-MacBook-Air-de-Daniel:SAT-Pol danrodcha$ stack exec sat
+MacBook-Air-de-Daniel:SAT-Pol danrodcha$ stack exec sat exFORMULAS/easy/example1.txt frequency
 The satisfactibility of instance exFORMULAS/easy/example1.txt solved by frequency heuristics is:
 False
 #+END_SRC
@@ -255,24 +250,33 @@ information about it.
 + It's False
 *** Medium Examples
 **** exampleSat0
-#+BEGIN_SRC hs :tangle yes
-λ> main "exDIMACS/medium/exampleSat0.txt"
+#+BEGIN_SRC haskell
+*MainFunctions> satCNF
+The satisfactibility of instance exDIMACS/medium/exampleSat0.txt solved by frequency heuristics is:
 True
-(0.08 secs, 70,098,976 bytes)
+(0.22 secs, 62,421,664 bytes)
 #+END_SRC
 **** exampleSat1
-#+BEGIN_SRC hs :tangle yes
-λ> main "exDIMACS/medium/exampleSat1.txt"
+#+BEGIN_SRC haskell
+*MainFunctions> satCNF
+The satisfactibility of instance exDIMACS/medium/exampleSat1.txt solved by frequency heuristics is:
 True
-(0.13 secs, 106,008,992 bytes)
+(0.30 secs, 91,977,392 bytes)
 #+END_SRC
 **** exampleSat2
-#+BEGIN_SRC hs :tangle yes
-λ> main "exDIMACS/medium/exampleSat2.txt"
+#+BEGIN_SRC haskell
+*MainFunctions> satCNF
+The satisfactibility of instance exDIMACS/medium/exampleSat2.txt solved by frequency heuristics is:
 True
-(53.45 secs, 16,622,296,456 bytes)
+(5.75 secs, 2,316,817,464 bytes)
 #+END_SRC
 **** exampleSat3
+#+BEGIN_SRC haskell
+*MainFunctions> satCNF
+The satisfactibility of instance exDIMACS/medium/exampleSat0.txt solved by frequency heuristics is:
+True
+(0.22 secs, 62,421,664 bytes)
+#+END_SRC
 *** Hard Examples
 **** sat100
 + Has 430 clauses
@@ -286,10 +290,11 @@ True
 + Has 1065 clauses
 + Has 250 variables
 + It's False
-#+BEGIN_SRC hs :tangle yes
-λ> main "exDIMACS/hard/unsat250.cnf"
+#+BEGIN_SRC haskell
+*MainFunctions> satCNF
+The satisfactibility of instance exDIMACS/hard/unsat250.cnf solved by frequency heuristics is:
 False
-(1.05 secs, 1,060,011,048 bytes)
+(0.07 secs, 34,195,800 bytes)
 #+END_SRC
 
 

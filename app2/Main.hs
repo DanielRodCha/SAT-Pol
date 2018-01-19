@@ -10,11 +10,15 @@ import System.Environment
 -- file /f/ were satisfiable. Otherwise, /(main f)/ would return False.
 
 main = do
- let f = "exDIMACS/medium/exampleSat2.txt"
- let h = frequency
+ [f,h] <- getArgs
  putStrLn ("The satisfactibility of instance " ++ f ++
-           " solved by frequency heuristics is:")
+           " solved by " ++ h ++ " heuristics is:")
  f' <- dimacs2Pols f
- let sol = saturateKB f' h
+ let sol = saturateKB f' (aux h)
  print sol
  return sol
+
+aux :: String -> Heuristics
+aux "frequency"   = frequency
+aux "monomialOrd" = monomialOrd
+aux "revFreq"     = revFreq

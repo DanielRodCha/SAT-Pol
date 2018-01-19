@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 317e38170c611e5401167a1dce80180e0842a6d000ed8f98202461d150a35dbe
+-- hash: a6be98ee61e8249dc16a39e57ad19942218449490dc06bffd6f38517df4b66d5
 
 name:           SAT-Pol
 version:        0.1.0.0
@@ -44,8 +44,8 @@ library
       Transformations
       Subsumption
       Analizador
-  other-modules:
       LogicParser
+  other-modules:
       MainFunctions
       Paths_SAT_Pol
   default-language: Haskell2010

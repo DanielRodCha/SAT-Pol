@@ -1,96 +1,54 @@
-{-# OPTIONS_GHC -fno-warn-unused-do-bind #-}
-{-# OPTIONS_HADDOCK hide #-}
-
 module LogicParser (parseFProp) where
 
+import Logic
+import Text.Parsec
+import Text.Parsec.String
+import Text.Parsec.Expr
+import Text.Parsec.Token as Token
+import Text.Parsec.Language
 
-import Haskell4Maths (var
-                     , zerov)
-import F2
-import Transformations ( phi)
-import Subsumption
+-- Language definition
+def = emptyDef { identStart = letter
+               , identLetter = alphaNum
+               , opStart = oneOf "&|>=~"
+               , opLetter = oneOf "&|>=~"
+               , reservedOpNames = ["&", "|", ">", "=", "~"]
+               , reservedNames = ["T","F"]
+               }
 
-import Data.List (foldl')
-import Data.Char
-import qualified Data.Set as S
+-- Lexer based on that definition
+lexer = makeTokenParser def
 
-import Logic (FProp (..), VarProp (..))
+-- Parsers
+m_parens = Token.parens lexer
+m_reserved = Token.reserved lexer
+m_reservedOp = Token.reservedOp lexer
+m_identifier = Token.identifier lexer
 
-import Text.ParserCombinators.Parsec
-    ((<|>), char, choice, eof, letter, parse, spaces, string, try)
+expr :: Parser FProp
+expr = buildExpressionParser table term
 
-import Text.ParserCombinators.Parsec.Error (ParseError)
-import Text.ParserCombinators.Parsec.Pos (SourceName)
-import Text.ParserCombinators.Parsec.Prim (GenParser)
+term = m_parens expr <|> atomicTerm
 
--- | The 'parseFProp' function accepts the name of a source, and a string to be
--- parsed, and attempts to parse the string as a logical expression of the
--- following forms, where @&#966;@ and @&#968;@ are metalinguistic variables
--- standing for any valid expression.
---
--- * Variables: @\"P\"@, @\"Q\"@, @\"a\"@, @\"b\"@ etc.; basically anything in
---   the character class @[a-zA-Z]@
---
--- * Negation: @\"~&#966;\"@
---
--- * Conjunction: @\"(&#966; & &#968;)\"@
---
--- * Disjunction: @\"(&#966; | &#968;)\"@
---
--- * Conditional: @\"(&#966; -> &#968;)\"@
---
--- * Biconditional: @\"(&#966; \<-> &#968;)\"@
---
--- Top-level expressions where the primary connective is a binary one do not
--- need to be parenthesised. For example, @\"p -> (q & r)\"@ is a valid
--- expression, although @\"(p -> (q & r))\"@ is also fine.
-parseFProp :: String -> FProp
-parseFProp xs = unbox' $ parseFProp' "" xs
- where unbox' (Right x) = x
+atomicTerm = literalTerm <|> identifierTerm
 
-parseFProp' :: SourceName -> String -> Either ParseError FProp
-parseFProp' = parse statement
+literalTerm = (m_reserved "T" >> return (T))
+          <|> (m_reserved "F" >> return (F))
 
-statement :: GenParser Char st FProp
-statement = do spaces
-               x <- try binary <|> expr
-               spaces
-               eof
-               return x
+identifierTerm = Atom <$> m_identifier
 
-expr :: GenParser Char st FProp
-expr = choice [binaryP, negation, variable]
+-- Operator table, from biggest to lowest priority
+table = [ [ prefix "-" Neg ]
+        , [ binary "&" Conj AssocLeft ]
+        , [ binary "|" Disj  AssocLeft ]
+        , [ binary "->" Impl AssocLeft ]
+        , [ binary "<->" Equi AssocLeft ]
+        ]
 
-variable :: GenParser Char st FProp
-variable = do c <- letter
-              return $ Atom [c]
+binary  name fun assoc = Infix   (m_reservedOp name >> return fun ) assoc
+prefix  name fun       = Prefix  (m_reservedOp name >> return fun )
+postfix name fun       = Postfix (m_reservedOp name >> return fun )
 
-negation :: GenParser Char st FProp
-negation = do char '~'
-              spaces
-              x <- expr
-              return $ Neg x
-
-binaryP :: GenParser Char st FProp
-binaryP = do char '('
-             spaces
-             x <- binary
-             spaces
-             char ')'
-             return x
-
-binary :: GenParser Char st FProp
-binary = do x1 <- expr
-            spaces
-            s  <- choice $ map string ["&", "|", "->", "<->"]
-            spaces
-            x2 <- expr
-            return $ connective s x1 x2
-  where
-    connective c = case c of
-      "&"   -> Conj
-      "|"   -> Disj
-      "->"  -> Impl
-      "<->" -> Equi
-      _     -> error "Impossible case"
-      
+-- Parser
+parseFProp :: String -> Either ParseError FProp
+parseFProp = parse expr ""

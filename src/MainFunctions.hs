@@ -34,20 +34,27 @@ saturateKBTrace (ps,v:vs) h | S.member 0 ps = [(ps,False)]
                             | otherwise     = ((ps,True):(saturateKBTrace (aux, h aux vs) h))
                                where aux    = forgetVarKB v ps
 
-satCNF = do
- let f = "exDIMACS/easy/example1.txt"
- let h = frequency
- putStrLn ("The satisfactibility of instance " ++ f ++
-           " solved by frequency heuristics is:")
- f' <- dimacs2Pols f
- let sol = saturateKB f' h
- print sol
+saturateKBSizeTrace :: (S.Set PolF2,[PolF2]) -> Heuristics -> [((PolF2,Int),Bool)]
+saturateKBSizeTrace (ps,[])   h                 = [((0,S.size ps),S.notMember 0 ps)]
+saturateKBSizeTrace (ps,v:vs) h | S.member 0 ps = [((v,S.size ps),False)]
+                                | otherwise     = (((v,S.size ps),True):(saturateKBSizeTrace (aux, h aux vs) h))
+                               where aux    = forgetVarKB v ps
 
-satFORMULAS = do
- let f = "exFORMULAS/easy/example1.txt"
- let h = frequency
+satFORMULAS f h = do
  putStrLn ("The satisfactibility of instance " ++ f ++
-           " solved by frequency heuristics is:")
+           " solved by " ++ h ++ " heuristics is:")
  f' <- formulas2Pols f
- let sol = saturateKB f' h
- print sol
+ let sol = saturateKB f' (aux h)
+ return sol
+
+satCNF f h = do
+ putStrLn ("The satisfactibility of instance " ++ f ++
+           " solved by " ++ h ++ " heuristics is:")
+ f' <- dimacs2Pols f
+ let sol = saturateKB f' (aux h)
+ return sol
+
+aux :: String -> Heuristics
+aux "frequency"   = frequency
+aux "monomialOrd" = monomialOrd
+aux "revFreq"     = revFreq

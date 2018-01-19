@@ -4,11 +4,10 @@ module Preprocessing where
 import Haskell4Maths (var
                      , zerov
                      , vars)
-import F2
+import F2 (PolF2)
 import Transformations ( phi, projection)
 import Subsumption
---import LogicParser
-import Analizador (parseFProp)
+import LogicParser
 
 import Data.List (foldl')
 import Data.Char
@@ -75,5 +74,8 @@ formulas2Pols f = do
      where aux1 (a,b) = (a,S.toList b)
            aux2 (a,b) (acc,vs) = (S.insert a acc, S.union vs b)
 --           aux2 (a,b) (acc',vs) = (S.insert a (removeDivisors a acc'), S.union vs b)
-           aux3 = aux4 . projection . parseFProp
+           aux3 = aux4 . projection . unbox . parseFProp
            aux4 x = (x,S.fromList (vars x))
+
+unbox :: Either a b -> b
+unbox (Right x) = x
