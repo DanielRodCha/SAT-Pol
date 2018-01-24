@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: a6be98ee61e8249dc16a39e57ad19942218449490dc06bffd6f38517df4b66d5
+-- hash: 2df2449f03dccbd06e85a52b44fae20909e2042e3a6cb0f0157fae430b438a6e
 
 name:           SAT-Pol
 version:        0.1.0.0
@@ -43,7 +43,6 @@ library
       Saturation
       Transformations
       Subsumption
-      Analizador
       LogicParser
   other-modules:
       MainFunctions
@@ -67,7 +66,6 @@ executable sat
     , hspec
     , parsec
   other-modules:
-      Analizador
       Derivative
       F2
       Haskell4Maths
@@ -100,7 +98,6 @@ executable satCNF
     , hspec
     , parsec
   other-modules:
-      Analizador
       Derivative
       F2
       Haskell4Maths
@@ -135,7 +132,6 @@ test-suite doctests
     , hspec
     , parsec
   other-modules:
-      Analizador
       Derivative
       F2
       Haskell4Maths
@@ -172,7 +168,6 @@ test-suite spec
       F2Spec
       RuleSpec
       TransformationsSpec
-      Analizador
       Derivative
       F2
       Haskell4Maths
@@ -206,7 +201,6 @@ benchmark bench-innit
     , hspec
     , parsec
   other-modules:
-      Analizador
       Derivative
       F2
       Haskell4Maths

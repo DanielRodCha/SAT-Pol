@@ -31,7 +31,6 @@ library:
   - Saturation
   - Transformations
   - Subsumption
-  - Analizador
   - LogicParser
 executables:
   sat:

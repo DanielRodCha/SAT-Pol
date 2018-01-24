@@ -298,3 +298,5 @@ False
 #+END_SRC
 
 
+** References 
+https://github.com/andrepd/haskell-logic/blob/master/logic_parser.hs

@@ -9,7 +9,6 @@ import Transformations ( projection
                        , theta)
 import Heuristics
 import Subsumption   -- not in use
-import Analizador    (parseFProp)
 import Preprocessing ( dimacs2Pols
                      , formulas2Pols)
 import Saturation    ( forgetVarKB
