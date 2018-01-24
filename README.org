@@ -135,15 +135,15 @@ Para ello basta con usar la función forgetVarKB:
 *MainFunctions> x1 = (var "x1") :: PolF2
 *MainFunctions> x2 = (var "x2") :: PolF2
 *MainFunctions> forgetVarKB x2 (S.fromList [x2,x1*x2,x1+1])
--- fromList [x1,x1+1,1]
+fromList [x1,x1+1,1]
 *MainFunctions> forgetVarKB x1 (S.fromList [x1,x1+1,1])
--- fromList [0]
+fromList [0]
 #+END_SRC
 
 **** Olvidar una lista determinada de variables mediante la regla de independecia
 Existen dos formas de hacerlo, dejando que la librería escoja el orden
-en el que va a olvidar cada variable (según una heurística o
-especificándolo manualmente).
+en el que va a olvidar cada variable (según una heurística) o
+especificándolo manualmente.
 
 - Según heurística:
 #+BEGIN_SRC haskell
@@ -184,7 +184,7 @@ formatos aptos, es decir, formato [[http://www.satcompetition.org/2009/format-be
 Si el archivo contiene la base de conocimiento en formato DIMACS, las
 funciones que sirven para interactuar son:
 
-#+BEGIN_SRC
+#+BEGIN_SRC haskell
 *MainFunctions> dimacs2Pols "exDIMACS/easy/example1.txt"
 (fromList [x1x2+x1+x2,1],[x1,x2])
 *MainFunctions> satCNF "exDIMACS/easy/example1.txt" "frequency"
@@ -199,7 +199,7 @@ Por otro lado, si el archivo contiene la base de conocimiento según la
 sintaxis de Prover9 (teniendo en cuenta que sólo trabaja con lógica
 proposicional), las funciones son:
 
-#+BEGIN_SRC
+#+BEGIN_SRC haskell
 *MainFunctions> formulas2Pols "exFORMULAS/easy/example1.txt"
 (fromList [x1x2+x1+x2,x1x3,x1x3+x3+1,x1x4+x4],[x1,x2,x3,x4])
 *MainFunctions> satFORMULAS "exFORMULAS/easy/example1.txt" "frequency"
