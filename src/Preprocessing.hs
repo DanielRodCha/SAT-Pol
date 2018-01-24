@@ -74,7 +74,7 @@ formulas2Pols f = do
      where aux1 (a,b) = (a,S.toList b)
            aux2 (a,b) (acc,vs) = (S.insert a acc, S.union vs b)
 --           aux2 (a,b) (acc',vs) = (S.insert a (removeDivisors a acc'), S.union vs b)
-           aux3 = aux4 . projection . unbox . parseFProp
+           aux3 = aux4 . projection . unbox . parseFProp . init
            aux4 x = (x,S.fromList (vars x))
 
 unbox :: Either a b -> b
