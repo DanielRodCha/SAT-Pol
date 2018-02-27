@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 2df2449f03dccbd06e85a52b44fae20909e2042e3a6cb0f0157fae430b438a6e
+-- hash: eece96b550582c86d7cadccdd0e1d6b6f7062d9fd43555915c551c3aa53e1de1
 
 name:           SAT-Pol
 version:        0.1.0.0
@@ -44,6 +44,7 @@ library
       Transformations
       Subsumption
       LogicParser
+      Polynomials
   other-modules:
       MainFunctions
       Paths_SAT_Pol
@@ -73,6 +74,7 @@ executable sat
       Logic
       LogicParser
       MainFunctions
+      Polynomials
       Preprocessing
       Rule
       Saturation
@@ -105,6 +107,7 @@ executable satCNF
       Logic
       LogicParser
       MainFunctions
+      Polynomials
       Preprocessing
       Rule
       Saturation
@@ -139,6 +142,7 @@ test-suite doctests
       Logic
       LogicParser
       MainFunctions
+      Polynomials
       Preprocessing
       Rule
       Saturation
@@ -175,6 +179,7 @@ test-suite spec
       Logic
       LogicParser
       MainFunctions
+      Polynomials
       Preprocessing
       Rule
       Saturation
@@ -208,6 +213,7 @@ benchmark bench-innit
       Logic
       LogicParser
       MainFunctions
+      Polynomials
       Preprocessing
       Rule
       Saturation

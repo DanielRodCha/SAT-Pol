@@ -1,10 +1,13 @@
 module Heuristics ( Heuristics
                   , monomialOrd
                   , frequency
-                  , revFreq ) where
+                  , revFreq
+                  , sizePol
+                  , freqSize
+                  , numVars
+                  , freqNumVars) where
 
-import Haskell4Maths (var
-                     , vars)
+import Haskell4Maths
 import F2
 
 import Data.List (foldl', sortOn)
@@ -44,3 +47,31 @@ frequency ps vs = sortOn frequency vs
 revFreq :: Heuristics
 revFreq ps = (reverse . frequency ps)
 
+sizePol :: Heuristics
+sizePol ps vs = sortOn sizePol' vs
+   where sizePol' v      = foldl' (\acc p -> (if elem v (vars p) then (sizePol'' p) else 0) + acc) 0 ps
+         sizePol'' (V p) = sum $ map (\(Lex (M a b),k) -> length b) p
+
+
+freqSize :: Heuristics
+freqSize ps vs = sortOn (\v -> 1000*(frequency' v) + (sizePol' v)) vs
+   where frequency' v = length $ filter (== v) ps''
+         ps'  = foldl' (\acc p -> ((vars p,sizePol'' p):acc)) [] ps
+         ps'' = concat $ map fst ps' 
+         sizePol' v = foldl' (\acc (xs,n) -> (if (elem v xs) then n else 0) + acc) 0 ps'
+         sizePol''  = length . show
+
+
+numVars :: Heuristics
+numVars ps vs = sortOn numVars' vs
+    where numVars' v  = foldl' (\acc p -> (numVars'' p v) + acc) 0 ps
+
+numVars'' p v | elem v vs = length vs
+              | otherwise = 0
+                  where vs = vars p
+
+freqNumVars :: Heuristics
+freqNumVars ps vs = sortOn (\v -> 1000*(frequency' v) + (numVars' v)) vs
+   where frequency' v = length ( filter (== v) ps')
+         ps' = foldl' (\acc p -> (vars p) ++ acc) [] ps
+         numVars' v  = foldl' (\acc p -> (numVars'' p v) + acc) 0 ps
