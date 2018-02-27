@@ -48,21 +48,40 @@ type Heuristics = Set PolF2 -> [PolF2] -> [PolF2]
 
 -- | (<b> monomialOrd ps vs </b>) is the list of variables which occurs in
 --   ps in the monomial order induced by the data type PolF2. For example:
---   &gt;&gt;&gt; [x1,x2] = map var ["x1","x2"] :: [PolF2] &gt;&gt;&gt;
---   monomialOrd (S.fromList [x1,x2,x1+1]) [x1,x2] [x1,x2]
+--   
+--   <pre>
+--   &gt;&gt;&gt; [x1,x2] = map var ["x1","x2"] :: [PolF2]
+--   
+--   &gt;&gt;&gt; monomialOrd (S.fromList [x1,x2,x1+1]) [x1,x2]
+--   [x1,x2]
+--   </pre>
 monomialOrd :: Heuristics
 
 -- | (<b> frequency ps vs </b>) is the list of variables vs sorted by
---   frequency of occurrence in ps. For example: &gt;&gt;&gt; [x1,x2] = map
---   var ["x1","x2"] :: [PolF2] &gt;&gt;&gt; frequency (S.fromList
---   [x1,x2,x1+1]) [x1,x2] [x2,x1]
+--   frequency of occurrence in ps. For example:
+--   
+--   <pre>
+--   &gt;&gt;&gt; [x1,x2] = map var ["x1","x2"] :: [PolF2]
+--   
+--   &gt;&gt;&gt; frequency (S.fromList [x1,x2,x1+1]) [x1,x2]
+--   [x2,x1]
+--   </pre>
 frequency :: Heuristics
 
 -- | (<b> revFreq ps vs </b>) is the list of variables vs ordered in
---   reverse order of frequency in ps. For example: &gt;&gt;&gt; [x1,x2] =
---   map var ["x1","x2"] :: [PolF2] &gt;&gt;&gt; revFreq (S.fromList
---   [x1,x2,x1+1]) [x1,x2] [x1,x2]
+--   reverse order of frequency in ps. For example:
+--   
+--   <pre>
+--   &gt;&gt;&gt; [x1,x2] = map var ["x1","x2"] :: [PolF2]
+--   
+--   &gt;&gt;&gt; revFreq (S.fromList [x1,x2,x1+1]) [x1,x2]
+--   [x1,x2]
+--   </pre>
 revFreq :: Heuristics
+sizePol :: Heuristics
+freqSize :: Heuristics
+numVars :: Heuristics
+freqNumVars :: Heuristics
 
 module Logic
 type VarProp = String
@@ -283,6 +302,31 @@ instance GHC.Classes.Eq Logic.FProp
 instance GHC.Show.Show Logic.FProp
 instance Test.QuickCheck.Arbitrary.Arbitrary Logic.FProp
 
+module LogicParser
+parseFProp :: String -> Either ParseError FProp
+
+module Polynomials
+type Variable = String
+data MonF2
+M :: (Set Variable) -> MonF2
+data PolF2
+P :: (Set MonF2) -> PolF2
+showAux :: Show a => Set a -> [Char]
+suma :: PolF2 -> PolF2 -> PolF2
+producto :: PolF2 -> PolF2 -> PolF2
+vars :: PolF2 -> [Variable]
+varsKB :: Set PolF2 -> [Variable]
+zero :: PolF2
+one :: PolF2
+var :: Variable -> PolF2
+instance GHC.Classes.Ord Polynomials.PolF2
+instance GHC.Classes.Eq Polynomials.PolF2
+instance GHC.Classes.Ord Polynomials.MonF2
+instance GHC.Classes.Eq Polynomials.MonF2
+instance GHC.Show.Show Polynomials.PolF2
+instance GHC.Num.Num Polynomials.PolF2
+instance GHC.Show.Show Polynomials.MonF2
+
 module Subsumption
 isDivisibleBy :: PolF2 -> PolF2 -> Bool
 removeDivisors :: PolF2 -> Set PolF2 -> Set PolF2
@@ -332,9 +376,9 @@ phi :: PolF2 -> PolF2
 theta :: PolF2 -> FProp
 
 -- | For example, &gt;&gt;&gt; [p1,p2] = [Atom "p1",Atom "p2"] &gt;&gt;&gt;
---   proyection p1 x1 &gt;&gt;&gt; tr (p1 → p1 ∧ p2) x1^2x2+x1+1
---   &gt;&gt;&gt; proyection (p1 → p1 ∧ p2) x1x2+x1+1
-proyection :: FProp -> PolF2
+--   projection p1 x1 &gt;&gt;&gt; tr (p1 → p1 ∧ p2) x1^2x2+x1+1
+--   &gt;&gt;&gt; projection (p1 → p1 ∧ p2) x1x2+x1+1
+projection :: FProp -> PolF2
 
 -- | For example,
 --   
@@ -392,6 +436,13 @@ clause2Pol :: [String] -> (PolF2, Set (PolF2))
 --   </pre>
 dimacs2Pols :: FilePath -> IO (Set PolF2, [PolF2])
 
+-- | <b>(formulas2Pols f)</b> is the pair (<i>ps</i>,<i>vs</i>) where ps is
+--   the set of polynomials wich corresponds to the formula in FORMULAS
+--   format writed in the file <i>f</i> and <i>vs</i> is the list of
+--   variables wich occurs in any polynomial. For example,
+formulas2Pols :: FilePath -> IO (Set Vect F2 Lex String, [Vect F2 Lex String])
+unbox :: Either a b -> b
+
 module Derivative
 
 -- | (<b>derivPol p v</b>) is the derivative of the polynomial p with
@@ -399,10 +450,20 @@ module Derivative
 --   works if it applies to polynomials without exponents greater than 1.
 --   In practice, deriv will only be used with the polynomials that have
 --   been previously embeded in the quotient group described above. For
---   example, &gt;&gt;&gt; [x1,x2,x3,x4] = (map var ["x1","x2","x3","x4"])
---   :: [PolF2] &gt;&gt;&gt; derivPol x1 x1 1 &gt;&gt;&gt; derivPol
---   (1+x1+x2+x1*x2) x1 x2+1 &gt;&gt;&gt; derivPol (x1*x2+x1+x3*x4+1) x1
+--   example,
+--   
+--   <pre>
+--   &gt;&gt;&gt; [x1,x2,x3,x4] = (map var ["x1","x2","x3","x4"]) :: [PolF2]
+--   
+--   &gt;&gt;&gt; derivPol x1 x1
+--   1
+--   
+--   &gt;&gt;&gt; derivPol (1+x1+x2+x1*x2) x1
 --   x2+1
+--   
+--   &gt;&gt;&gt; derivPol (x1*x2+x1+x3*x4+1) x1
+--   x2+1
+--   </pre>
 derivPol :: PolF2 -> PolF2 -> PolF2
 
 module Rule
@@ -444,17 +505,17 @@ module Saturation
 
 -- | <b>(independenceRuleAux v p ps acum)</b> is the union of the set
 --   <i>accum</i>, which ramains invariant, and the set of polynomials
---   obtained after applying independenceRule respect <i>v</i> between
---   polynomial <i>p</i> and every polynomial from set <i>pps</i>,
+--   obtained after applying independenceRule with respect to <i>v</i>
+--   between polynomial <i>p</i> and every polynomial from set <i>pps</i>,
 --   including itself. However, to improve efficiency the process is
 --   terminated if a zero occurs. This is because a zero in the polynomial
---   set is sufficient for the tool to return False. For example,
+--   set is sufficient for the tool to return False.
 independenceRuleAux :: PolF2 -> PolF2 -> Set PolF2 -> Set PolF2 -> Set PolF2
 
 -- | <b>(independenceRuleKB v pps acum)</b> is the union of the set
 --   <i>accum</i>, which ramains invariant, and the set of polynomials
---   obtained after applying deltaRule respect <i>v</i> between every
---   polynomial from set <i>pps</i>. For example,
+--   obtained after applying deltaRule with respect to <i>v</i> between
+--   every polynomial from set <i>pps</i>. For example,
 --   
 --   <pre>
 --   &gt;&gt;&gt; [x1,x2,x3] = (map var ["x1","x2","x3"]) :: [PolF2]
@@ -467,7 +528,9 @@ independenceRuleAux :: PolF2 -> PolF2 -> Set PolF2 -> Set PolF2 -> Set PolF2
 --   </pre>
 independenceRuleKB :: PolF2 -> Set PolF2 -> Set PolF2 -> Set PolF2
 
--- | For example, &gt;&gt;&gt; x1 = (var "x1") :: PolF2 &gt;&gt;&gt; x2 =
+-- | <b>(forgetVarKB v ps)</b> is the set of polynomials obtained after
+--   applying to <i>ps</i> the independence rule with respect to <i>v</i>.
+--   For example, &gt;&gt;&gt; x1 = (var "x1") :: PolF2 &gt;&gt;&gt; x2 =
 --   (var "x2") :: PolF2 &gt;&gt;&gt; forgetVarKB x2 (S.fromList
 --   [x2,x1*x2,x1+1]) fromList [x1,x1+1,1] &gt;&gt;&gt; forgetVarKB x1
 --   (S.fromList [x1,x1+1,1]) fromList [0]

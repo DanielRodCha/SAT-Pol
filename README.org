@@ -27,21 +27,21 @@ information about it.
 *** Medium Examples
 **** exampleSat0
 #+BEGIN_SRC haskell
-*MainFunctions> satCNF
+*MainFunctions> satCNF "exDIMACS/medium/exampleSat0.txt" "frequency"
 The satisfactibility of instance exDIMACS/medium/exampleSat0.txt solved by frequency heuristics is:
 True
 (0.22 secs, 62,421,664 bytes)
 #+END_SRC
 **** exampleSat1
 #+BEGIN_SRC haskell
-*MainFunctions> satCNF
+*MainFunctions> satCNF "exDIMACS/medium/exampleSat1.txt" "frequency"
 The satisfactibility of instance exDIMACS/medium/exampleSat1.txt solved by frequency heuristics is:
 True
 (0.30 secs, 91,977,392 bytes)
 #+END_SRC
 **** exampleSat2
 #+BEGIN_SRC haskell
-*MainFunctions> satCNF
+*MainFunctions> satCNF "exDIMACS/medium/exampleSat2.txt" "frequency"
 The satisfactibility of instance exDIMACS/medium/exampleSat2.txt solved by frequency heuristics is:
 True
 (5.75 secs, 2,316,817,464 bytes)
@@ -49,9 +49,8 @@ True
 **** exampleSat3
 #+BEGIN_SRC haskell
 *MainFunctions> satCNF
-The satisfactibility of instance exDIMACS/medium/exampleSat0.txt solved by frequency heuristics is:
-True
-(0.22 secs, 62,421,664 bytes)
+The satisfactibility of instance exDIMACS/medium/exampleSat3.txt solved by frequency heuristics is:
+
 #+END_SRC
 *** Hard Examples
 **** sat100
