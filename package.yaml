@@ -32,7 +32,6 @@ library:
   - Transformations
   - Subsumption
   - LogicParser
-  - Polynomials
 executables:
   sat:
    main: Main.hs

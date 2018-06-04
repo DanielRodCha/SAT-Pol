@@ -22,3 +22,4 @@ aux :: String -> Heuristics
 aux "frequency"   = frequency
 aux "monomialOrd" = monomialOrd
 aux "revFreq"     = revFreq
+aux "freqNumVars" = freqNumVars

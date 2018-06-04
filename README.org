@@ -8,6 +8,223 @@ rule. There is further information obout the algorithm in this
 
 The documentation about the modules it's hosted [[https://danielrodcha.github.io/SAT-Pol/][here]].
 
+* User guide
+
+Here are the instructions to use this library, assuming that the
+reader does not have any of the necessary programs installed.
+
+** Git
+First of all, Git is needed. [[https://git-scm.com/book/en/v2/Getting-Started-Installing-Git][Here]] are instrucctions to install it.
+
+Once you have installed it, download the library by typping the
+following command in the shell:
+
+#+BEGIN_SRC
+git clone https://github.com/DanielRodCha/SAT-Pol.git
+#+END_SRC
+
+** Stack
+The library is written in Haskell language, so the [[https://docs.haskellstack.org/en/stable/README/][stack]] tool it
+needed in order to build it. This tool will automatically download and
+build all the dependencies.
+
+After you have finished the stack instalation, go to the SAT-Pol
+folder (It was created in the step above). Next, build the project:
+
+#+BEGIN_SRC
+stack update
+stack build
+#+END_SRC
+
+** MainFunctions
+*** Load MainFunctions module:
+Finally, it is recommended to load the src/MainFunctions module
+because it contains the most important functions of the library. In
+order to do that, use the following commands:
+
+#+BEGIN_SRC
+SAT-Pol danrodcha$ stack ghci
+SAT-Pol-0.1.0.0: initial-build-steps (lib + exe)
+Configuring GHCi with the following packages: SAT-Pol
+
+The main module to load is ambiguous. Candidates are: 
+1. Package `SAT-Pol' component exe:sat with main-is file: /Users/danrodcha/SAT-Pol/app2/Main.hs
+2. Package `SAT-Pol' component exe:satCNF with main-is file: /Users/danrodcha/SAT-Pol/app/Main.hs
+You can specify which one to pick by: 
+ * Specifying targets to stack ghci e.g. stack ghci SAT-Pol:exe:sat
+ * Specifying what the main is e.g. stack ghci --main-is SAT-Pol:exe:sat
+ * Choosing from the candidate above [1..2]
+
+Specify main module to use (press enter to load none): 
+#+END_SRC
+
+Press Enter:
+
+#+BEGIN_SRC
+Not loading any main modules, as no valid module selected
+
+GHCi, version 8.2.2: http://www.haskell.org/ghc/  :? for help
+[ 1 of 13] Compiling Haskell4Maths    ( /Users/danrodcha/SAT-Pol/src/Haskell4Maths.hs, interpreted )
+[ 2 of 13] Compiling F2               ( /Users/danrodcha/SAT-Pol/src/F2.hs, interpreted )
+[ 3 of 13] Compiling Heuristics       ( /Users/danrodcha/SAT-Pol/src/Heuristics.hs, interpreted )
+[ 4 of 13] Compiling Logic            ( /Users/danrodcha/SAT-Pol/src/Logic.hs, interpreted )
+[ 5 of 13] Compiling Analizador       ( /Users/danrodcha/SAT-Pol/src/Analizador.hs, interpreted )
+[ 6 of 13] Compiling Subsumption      ( /Users/danrodcha/SAT-Pol/src/Subsumption.hs, interpreted )
+[ 7 of 13] Compiling Transformations  ( /Users/danrodcha/SAT-Pol/src/Transformations.hs, interpreted )
+[ 8 of 13] Compiling Preprocessing    ( /Users/danrodcha/SAT-Pol/src/Preprocessing.hs, interpreted )
+[ 9 of 13] Compiling LogicParser      ( /Users/danrodcha/SAT-Pol/src/LogicParser.hs, interpreted )
+[10 of 13] Compiling Derivative       ( /Users/danrodcha/SAT-Pol/src/Derivative.hs, interpreted )
+[11 of 13] Compiling Rule             ( /Users/danrodcha/SAT-Pol/src/Rule.hs, interpreted )
+[12 of 13] Compiling Saturation       ( /Users/danrodcha/SAT-Pol/src/Saturation.hs, interpreted )
+[13 of 13] Compiling MainFunctions    ( /Users/danrodcha/SAT-Pol/src/MainFunctions.hs, interpreted )
+Ok, 13 modules loaded.
+Loaded GHCi configuration from /private/var/folders/k5/5wbfgm4d5cbbbgm0c9hqk94m0000gn/T/ghci12315/ghci-script
+*Transformations Analizador Derivative F2 Haskell4Maths Heuristics Logic LogicParser MainFunctions Preprocessing Rule Saturation Subsumption Transformations> 
+#+END_SRC
+
+Load MainFunctions module:
+
+#+BEGIN_SRC
+*Transformations Analizador Derivative F2 Haskell4Maths Heuristics Logic LogicParser MainFunctions Preprocessing Rule Saturation Subsumption Transformations> :l MainFunctions 
+[ 1 of 12] Compiling Haskell4Maths    ( /Users/danrodcha/SAT-Pol/src/Haskell4Maths.hs, interpreted )
+[ 2 of 12] Compiling F2               ( /Users/danrodcha/SAT-Pol/src/F2.hs, interpreted )
+[ 3 of 12] Compiling Heuristics       ( /Users/danrodcha/SAT-Pol/src/Heuristics.hs, interpreted )
+[ 4 of 12] Compiling Logic            ( /Users/danrodcha/SAT-Pol/src/Logic.hs, interpreted )
+[ 5 of 12] Compiling Analizador       ( /Users/danrodcha/SAT-Pol/src/Analizador.hs, interpreted )
+[ 6 of 12] Compiling Subsumption      ( /Users/danrodcha/SAT-Pol/src/Subsumption.hs, interpreted )
+[ 7 of 12] Compiling Transformations  ( /Users/danrodcha/SAT-Pol/src/Transformations.hs, interpreted )
+[ 8 of 12] Compiling Preprocessing    ( /Users/danrodcha/SAT-Pol/src/Preprocessing.hs, interpreted )
+[ 9 of 12] Compiling Derivative       ( /Users/danrodcha/SAT-Pol/src/Derivative.hs, interpreted )
+[10 of 12] Compiling Rule             ( /Users/danrodcha/SAT-Pol/src/Rule.hs, interpreted )
+[11 of 12] Compiling Saturation       ( /Users/danrodcha/SAT-Pol/src/Saturation.hs, interpreted )
+[12 of 12] Compiling MainFunctions    ( /Users/danrodcha/SAT-Pol/src/MainFunctions.hs, interpreted )
+Ok, 12 modules loaded.
+*MainFunctions> 
+#+END_SRC
+
+*** Previous considerations
+Theoretically a knowledge basis (KB) is a set of rules, so it will be
+represented with the datatype set. But in practice, the KB will be
+given as a list of rules so we must transform it by using the function
+fromList:
+
+#+BEGIN_SRC haskell
+*MainFunctions> S.fromList []
+fromList []
+*MainFunctions> S.fromList [1,2,3,1,2]
+fromList [1,2,3]
+*MainFunctions> [x1,x2,x3,x4] = map var ["x1","x2","x3","x4"] :: [PolF2]
+*MainFunctions> S.fromList [x1,x2,x1+1,x1]
+fromList [x1,x1+1,x2]
+#+END_SRC
+
+As is shown above, the variables must be declared before using them to
+define polynomials. Later, this will not be necessary if we import the
+KB from a text file.
+
+The main tasks that this library solves will be shown in the following
+section:
+
+*** Forget a variable by using the independece rule:
+This is done using the forgetVarKB function:
+
+#+BEGIN_SRC haskell
+*MainFunctions> x1 = (var "x1") :: PolF2
+*MainFunctions> x2 = (var "x2") :: PolF2
+*MainFunctions> forgetVarKB x2 (S.fromList [x2,x1*x2,x1+1])
+fromList [x1,x1+1,1]
+*MainFunctions> forgetVarKB x1 (S.fromList [x1,x1+1,1])
+fromList [0]
+#+END_SRC
+
+*** Forget a list of variables by using the independece rule
+There are two ways of doing it, by letting the library to choose the
+order (according to a heuristic) or by forcing an specific order:
+
+- According to a heuristic:
+#+BEGIN_SRC haskell
+*MainFunctions> [x1,x2,x3,x4] = map var ["x1","x2","x3","x4"] :: [PolF2]
+*MainFunctions> forgetVarListKB' (S.fromList [x2,x1*x2,x1+1,x3+x4,x1*x2*x4+x2+1],[x1,x2,x3,x4]) frequency
+[fromList [x1x2x4+x2+1,x1x2,x1+1,x2,1],fromList [x1x2,x1x2+x2+1,x1+1,x2,1],fromList [0],fromList [0]]
+#+END_SRC
+
+- Specific order:
+#+BEGIN_SRC haskell
+*MainFunctions> [x1,x2,x3,x4] = map var ["x1","x2","x3","x4"] :: [PolF2]
+*MainFunctions> forgetVarListKB (S.fromList [x2,x1*x2,x1+1,x3+x4,x1*x2*x4+x2+1],[x3,x2,x4,x1])
+[fromList [x1x2x4+x2+1,x1x2,x1+1,x2,1],fromList [x1x4,x1,x1+1,1],fromList [x1,x1+1,1],fromList [0]]
+#+END_SRC
+
+*** Solve SAT problem
+There are two ways of doing it, the first solves the problem and
+return only the solution:
+
+#+BEGIN_SRC haskell
+*MainFunctions> [x1,x2,x3,x4] = map var ["x1","x2","x3","x4"] :: [PolF2]
+*MainFunctions> saturateKB (S.fromList [x2,x1*x2,x1+1,x3+x4,x1*x2*x4+x2+1],[x1,x2,x3,x4]) frequency
+False
+#+END_SRC
+
+While the second one, returns all the calculation trace.
+
+#+BEGIN_SRC haskell
+*MainFunctions> [x1,x2,x3,x4] = map var ["x1","x2","x3","x4"] :: [PolF2]
+*MainFunctions> saturateKBTrace (S.fromList [x2,x1*x2,x1+1,x3+x4,x1*x2*x4+x2+1],[x1,x2,x3,x4]) frequency
+[(fromList [x1x2x4+x2+1,x1x2,x1+1,x2,x3+x4],True),(fromList [0],False)]
+#+END_SRC
+
+*** Problem instances written in text files
+One of the main advantages of this library is that allows us to work
+with problems examples written in tex files. But them must be written
+in good formats as [[http://www.satcompetition.org/2009/format-benchmarks2009.html][DIMACS]] or [[http://www.cs.us.es/~fsancho/?e=173][Prover9 syntax]]:
+
+If the KB is in DIMACS format, the useful functions are:
+#+BEGIN_SRC haskell
+*MainFunctions> dimacs2Pols "exDIMACS/easy/example1.txt"
+(fromList [x1x2+x1+x2,1],[x1,x2])
+*MainFunctions> satCNF "exDIMACS/easy/example1.txt" "frequency"
+The satisfactibility of instance exDIMACS/easy/example1.txt solved by frequency heuristics is:
+True
+#+END_SRC
+
+Note that we must specify which heuristic we want to use. In the above
+case we used frequency heuristic but there are many other. If the
+reader want to explore them (or even define others) go to Heuristic
+module.
+
+If the KB is written used the Prover9 syntax, the functions are the
+following:
+
+#+BEGIN_SRC haskell
+*MainFunctions> formulas2Pols "exFORMULAS/easy/example4.txt"
+(fromList [x1x2+x1+x2,x1x2+x1+1,x1x2+x2+1,x1x2+1],[x1,x2])
+*MainFunctions> satFORMULAS "exFORMULAS/easy/example4.txt" "frequency"
+The satisfactibility of instance exFORMULAS/easy/example1.txt solved by frequency heuristics is:
+False
+#+END_SRC
+
+*** Solve a SAT instace by commands:
+The stack tool allow us to create some executables. We have made two
+of them, depending on the format of the file. If the KB is in DIMACS
+format the executable is named satCNF and must be followed by the file
+name and the heuristic:
+
+#+BEGIN_SRC
+MacBook-Air-de-Daniel:SAT-Pol danrodcha$ stack build
+MacBook-Air-de-Daniel:SAT-Pol danrodcha$ stack exec satCNF exDIMACS/medium/exampleSat2.txt frequency
+The satisfactibility of instance exDIMACS/medium/exampleSat2.txt solved by frequency heuristics is:
+True
+#+END_SRC
+
+If the KB is written by Prover9 syntax, the executable is named sat:
+
+#+BEGIN_SRC
+MacBook-Air-de-Daniel:SAT-Pol danrodcha$ stack build
+MacBook-Air-de-Daniel:SAT-Pol danrodcha$ stack exec sat exFORMULAS/easy/example4.txt frequency
+The satisfactibility of instance exFORMULAS/easy/example1.txt solved by frequency heuristics is:
+False
+#+END_SRC
+
 * exDIMACS study
 This directory stores several examples of sets of formulas in DIMACS format. See [[http://www.satcompetition.org/2009/format-benchmarks2009.html][DIMACS format]] for further
 information about it.
@@ -75,6 +292,7 @@ False
 
 ** References 
 https://github.com/andrepd/haskell-logic/blob/master/logic_parser.hs
+
 * User guide (Spanish)
 Aquí se describen las pautas a seguir para poder usar la librería,
 suponiendo que el lector no tiene instalados ninguno de los programas

@@ -41,7 +41,7 @@ prop_deriv_sum p q v = derivPol (p+q) x == (derivPol p x) + (derivPol q x)
 prop_deriv :: FProp -> Int -> Bool
 prop_deriv f n = equivalent (theta (derivPol pol v))
                                  (no (Equi (substitute f varP (no p)) f))
-  where pol           = proyection f
+  where pol           = projection f
         vs            = union (vars pol) [((var "x") :: PolF2)]
         v             = vs !! (n `mod` (length vs))
         p             = theta v
